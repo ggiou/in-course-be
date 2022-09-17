@@ -1,85 +1,28 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+# logging-deploy.yml
 
-name: Java CI with Gradle
+name: logging-system
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-    
-    
-env:
-  S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}}
+  workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        
-    - uses: actions/checkout@v2
-    - run: touch ./src/main/resources/application.properties
-    - run: echo "${{secrets.APPLICATION}}" > ./src/main/resources/application.properties
-    - uses: actions/upload-artifact@v2
-      with:
-        name: application.properties
-        path: ./src/main/resources/application.properties
-        
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Build with Gradle
-      run: ./gradlew clean build
-      
-    - name: Make Directory
-      run: mkdir -p deploy
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
 
-    - name: Copy Jar
-      run: cp ./build/libs/*.jar ./deploy
-      
-    - name: Copy appspec.yml
-      run: cp appspec.yml ./deploy
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        shell: bash
 
-    - name: Copy script
-      run: cp ./scripts/*.sh ./deploy
-      
-    - name: Make zip file
-      run: zip -r ./prscs.zip ./deploy
-      shell: bash
-          
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-        
-    - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./prscs.zip s3://$S3_BUCKET_NAME/
-      
-    # Deploy
-    - name: Deploy
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-      run:
-        aws deploy create-deployment 
-        --application-name prscs-test2
-        --deployment-group-name prscsl-group3
-        --file-exists-behavior OVERWRITE 
-        --s3-location bucket=${{secrets.S3_BUCKET_NAME}},bundleType=zip,key=prscs.zip
+      - name: Build with Gradle
+        run: ./gradlew build
+        shell: bash
+
