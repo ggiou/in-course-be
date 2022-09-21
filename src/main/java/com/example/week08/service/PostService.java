@@ -2,14 +2,10 @@ package com.example.week08.service;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.example.week08.domain.Post;
-import com.example.week08.domain.Score;
 import com.example.week08.dto.request.PostRequestDto;
-import com.example.week08.dto.request.ScoreRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.ResponseDto;
-import com.example.week08.dto.response.ScoreResponseDto;
 import com.example.week08.repository.PostRepository;
-import com.example.week08.repository.ScoreRepository;
 import com.example.week08.util.AwsS3UploadService;
 import com.example.week08.util.UploadService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +26,7 @@ import java.util.UUID;
 public class PostService {
 
     private final PostRepository postRepository;
-//    private final TokenProvider tokenProvider;
+    //    private final TokenProvider tokenProvider;
     private final UploadService s3Service;
 
     private final AwsS3UploadService awsS3UploadService;
@@ -38,9 +34,9 @@ public class PostService {
     // 코스 게시글 작성
     @Transactional
     public ResponseDto<?> createPost(PostRequestDto requestDto,
-                                       MultipartFile file,
-                                       HttpServletRequest request
-                                       ) {
+                                     MultipartFile file,
+                                     HttpServletRequest request
+    ) {
 
 //        if (null == request.getHeader("RefreshToken")) {
 //            return ResponseDto.fail("MEMBER_NOT_FOUND",
@@ -286,4 +282,3 @@ public class PostService {
     }
 
 }
-

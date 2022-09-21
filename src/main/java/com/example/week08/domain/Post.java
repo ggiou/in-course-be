@@ -3,6 +3,7 @@ package com.example.week08.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Builder
 @Getter
@@ -38,7 +39,11 @@ public class Post extends Timestamped {
     @Column
     private int score;
 
-    @Column(nullable = false)
+    @Column
+    private int avgScore;
+
+    @Column
+    @Min(0)
     private int heart;
 
 //    @JoinColumn(name = "member_id", nullable = false)
@@ -50,9 +55,13 @@ public class Post extends Timestamped {
 //        return !this.member.equals(member);
 //    }
 
-    // 찜하기 상태 동기화
-    public void syncHeart(int num) {
-        this.heart = (num);
+
+    // 게시글 찜하기
+    public void addHeart() {
+        this.heart += 1;
+    }
+    public void deleteHeart() {
+        this.heart -= 1;
     }
 
 }
