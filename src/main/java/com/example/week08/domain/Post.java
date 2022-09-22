@@ -2,8 +2,10 @@ package com.example.week08.domain;
 
 import com.amazonaws.services.ec2.model.EventType;
 import com.example.week08.dto.request.PostRequestDto;
+import com.example.week08.dto.request.ScoreRequestDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -85,11 +87,31 @@ public class Post extends Timestamped {
         }
     }
 
-    @Column
+    @ColumnDefault("0")
+    private int num;
+
+    @ColumnDefault("0")
     private int score;
 
-    @Column
+    @ColumnDefault("0")
     private int avgScore;
+
+    //    @Column
+//    private int avgScore;
+//
+//    @Getter
+//    public enum Point {
+//        Bad("20점"), NORMAL("40점"), GOOD("60점"), VERYGOOD("80점"), EXCELLENT("100점");
+//        public final String point;
+//
+//        Point(String point) {
+//            this.point = point;
+//        }
+//        @JsonCreator
+//        public static EventType from(String s) {
+//            return EventType.valueOf(s.toUpperCase());
+//        }
+//    }
 
     @Column
     @Min(0)
@@ -134,6 +156,13 @@ public class Post extends Timestamped {
     // 코스(게시글) 찜하기 취소
     public void deleteHeart() {
         this.heart -= 1;
+    }
+
+    // 코스(게시글) 평가 점수 주기
+    public void createScore(ScoreRequestDto requestDto) {
+        this.score += requestDto.getScore();
+        this.num += 1;
+        this.avgScore = (score/num);
     }
 
 }
