@@ -1,23 +1,19 @@
 package com.example.week08.service;
 
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.PostRepository;
-import com.example.week08.util.AwsS3UploadService;
-import com.example.week08.util.UploadService;
+import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,28 +21,14 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
-    //    private final TokenProvider tokenProvider;
-    private final UploadService s3Service;
-
-    private final AwsS3UploadService awsS3UploadService;
+    private final S3Uploader s3Uploader;
 
     // 코스 게시글 작성
     @Transactional
-    public Post postCreate(PostRequestDto postRequestDto, MultipartFile file) {
+    public Post postCreate(PostRequestDto postRequestDto, MultipartFile image) throws IOException {
 
-        // 파일 이름을 유니크한 이름으로 재지정. 같은 이름의 파일을 업로드 하면 overwrite 됨
-        String fileName = createFileName(file.getOriginalFilename());
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentType(file.getContentType());
-        objectMetadata.setContentLength(file.getSize());
-        try (InputStream inputStream = file.getInputStream()) {
-            s3Service.uploadFile(inputStream, objectMetadata, fileName);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(String.format("파일 변환 중 에러가 발생하였습니다 (%s)", file.getOriginalFilename()));
-        }
-
-        String image = s3Service.getFileUrl(fileName);
-        Post post = new Post(postRequestDto, image);
+        String postImage = s3Uploader.upload(image, "static");
+        Post post = new Post(postRequestDto, postImage);
         return postRepository.save(post);
     }
 
@@ -71,7 +53,7 @@ public class PostService {
 
     // 코스 게시글 수정
     @Transactional
-    public Post postUpdate(Long courseId, PostRequestDto postRequestDto, MultipartFile file) {
+    public Post postUpdate(Long courseId, PostRequestDto postRequestDto, MultipartFile image) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -79,22 +61,14 @@ public class PostService {
 //            throw new IllegalArgumentException("수정 권한이 없습니다.");
 //        }
 
-        // 파일 이름을 유니크한 이름으로 재지정. 같은 이름의 파일을 업로드 하면 overwrite 됨
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        String fileName = createFileName(file.getOriginalFilename());
-        objectMetadata.setContentType(file.getContentType());
-        objectMetadata.setContentLength(file.getSize());
-        try (InputStream inputStream = file.getInputStream()) {
-            s3Service.uploadFile(inputStream, objectMetadata, fileName);
-        } catch (IOException e) {
-            throw new IllegalArgumentException(String.format("파일 변환 중 에러가 발생하였습니다 (%s)", file.getOriginalFilename()));
+         String imageUrl = post.getImage();
+        //이미지 존재시 먼저 삭제후 다시 업로드.
+        if (imageUrl != null) {
+            String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
+            s3Uploader.deleteImage(deleteUrl);
+            imageUrl = s3Uploader.upload(image, "static");
         }
-
-        // 기존 이미지 파일 삭제
-        awsS3UploadService.deleteFile(getFileNameFromURL(post.getImage()));
-
-        String image = s3Service.getFileUrl(fileName);
-        post.update(postRequestDto, image);
+        post.update(postRequestDto, imageUrl);
 
         return post;
     }
@@ -109,28 +83,11 @@ public class PostService {
 //            throw new IllegalArgumentException("삭제 권한이 없습니다.");
 //        }
 
-        awsS3UploadService.deleteFile(getFileNameFromURL(post.getImage()));
+        String image = post.getImage();
+        String deleteUrl = image.substring(image.indexOf("static")); //이미지
+        //s3에서 이미지 삭제
+        s3Uploader.deleteImage(deleteUrl);
         postRepository.deleteById(courseId);
-
-    }
-
-
-    // URL 에서 파일이름(key) 추출
-    public static String getFileNameFromURL(String url) {
-        return url.substring(url.lastIndexOf('/') + 1, url.length());
-    }
-
-
-    private String createFileName(String originalFileName) {
-        return UUID.randomUUID().toString().concat(getFileExtension(originalFileName));
-    }
-
-    private String getFileExtension(String fileName) {
-        try {
-            return fileName.substring(fileName.lastIndexOf("."));
-        } catch (StringIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException(String.format("잘못된 형식의 파일 (%s) 입니다", fileName));
-        }
     }
 
 }
