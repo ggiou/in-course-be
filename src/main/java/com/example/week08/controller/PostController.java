@@ -22,8 +22,8 @@ public class PostController {
     // 코스 게시글 작성
     @PostMapping( "/api/course")
     public Post createPost(@RequestPart(value = "data") PostRequestDto requestDto,
-                           @RequestPart(value = "image" ,required = false) MultipartFile file) {
-        return postService.postCreate(requestDto, file);
+                           @RequestPart(value = "image" ,required = false) MultipartFile image) throws IOException {
+        return postService.postCreate(requestDto, image);
     }
 
     // 코스(게시글) 상세 조회
@@ -42,8 +42,8 @@ public class PostController {
     @PutMapping( "/api/course/{courseId}")
     public Post updatePost(@PathVariable Long courseId,
                            @RequestPart(value = "data") PostRequestDto requestDto,
-                           @RequestPart(value = "image" ,required = false) MultipartFile file) {
-        return postService.postUpdate(courseId, requestDto, file);
+                           @RequestPart(value = "image" ,required = false) MultipartFile image) throws IOException {
+        return postService.postUpdate(courseId, requestDto, image);
     }
 
     // 코스(게시글) 삭제
