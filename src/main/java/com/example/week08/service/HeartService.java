@@ -30,7 +30,7 @@ public class HeartService {
     public void deletePostHeart(Long courseId) {
 
         Post post = postRepository.findById(courseId).orElseThrow(
-                () -> new BusinessException("존재하지 않는 게시글 id 입니다..", ErrorCode.POST_NOT_EXIST)
+                () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         post.deleteHeart();
         postRepository.save(post);

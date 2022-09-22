@@ -11,7 +11,11 @@ public class PostRequestDto {
     private String title;
     private String content;
     private String image;
-    private String category;
-    private String tag;
+    private String weather;
+    private String region;
+    private String season;
+    private String who;
+
+
 }
 
