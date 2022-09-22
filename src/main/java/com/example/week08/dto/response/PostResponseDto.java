@@ -25,7 +25,7 @@ public class PostResponseDto {
     private String region;
     private String season;
     private String who;
-    private int score;
+    private int avgScore;
     private int heart;
     private String courseMap;
     private Member member;
@@ -41,7 +41,7 @@ public class PostResponseDto {
         this.region = post.getRegion();
         this.season = post.getSeason();
         this.who = post.getWho();
-        this.score = post.getScore();
+        this.avgScore = post.getAvgScore();
         this.heart = post.getHeart();
 //        this.member = post.getMember();
         this.createdAt = post.getCreatedAt();
