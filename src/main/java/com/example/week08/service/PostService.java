@@ -6,6 +6,7 @@ import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.PostRepository;
+import com.example.week08.repository.PostSpecification;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +50,21 @@ public class PostService {
     public List<PostResponseDto> getAllPost() {
         return postRepository.findAllByOrderByModifiedAtDesc().stream()
                 .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    // 코스(게시글) 카테고리 조회
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> findPost(PostRequestDto requestDto) {
+        Map<String, Object> searchKeys = new HashMap<>();
+        if (requestDto.getWeather() != null) searchKeys.put("weather", requestDto.getWeather());
+        if (requestDto.getRegion() != null) searchKeys.put("region", requestDto.getRegion());
+        if (requestDto.getSeason() != null) searchKeys.put("season", requestDto.getSeason());
+        if (requestDto.getWho() != null) searchKeys.put("who", requestDto.getWho());
+
+        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
+                .stream()
+                .map(p -> new PostResponseDto((Post) p))
                 .collect(Collectors.toList());
     }
 
