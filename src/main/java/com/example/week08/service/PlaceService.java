@@ -30,7 +30,7 @@ public class PlaceService {
 
     //카드 생성
     @Transactional
-    public void placeCreate(Long postId, PlaceRequestDto placeRequestDto
+    public void placeCreate(Long courseId, PlaceRequestDto placeRequestDto
 //            , Member member
     )
 //            throws IOException
@@ -46,7 +46,7 @@ public class PlaceService {
 //        }
 //        String placeImage = s3Uploader.upload(image, "static");
 
-        Place place = new Place(postId, placeRequestDto
+        Place place = new Place(courseId, placeRequestDto
 //                , member
         );
         placeRepository.save(place);

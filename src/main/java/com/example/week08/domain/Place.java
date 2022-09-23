@@ -38,7 +38,7 @@ public class Place extends Timestamped {
     private String image;//이미지 url사용할거
 
     @Column(nullable = false)
-    private Long postId;
+    private Long CourseId;
 
     @ManyToOne
     @JoinColumn(name = "Member_id", nullable = false)
@@ -49,7 +49,7 @@ public class Place extends Timestamped {
     @JsonBackReference
     private Post post;
 
-    public Place(Long postId, PlaceRequestDto placeRequestDto
+    public Place(Long CourseId, PlaceRequestDto placeRequestDto
 //            , Member member
     ) {
         this.content = placeRequestDto.getContent();
@@ -57,7 +57,7 @@ public class Place extends Timestamped {
         this.coordinateX = placeRequestDto.getCoordinateX();
         this.coordinateY = placeRequestDto.getCoordinateY();
         this.image = placeRequestDto.getImage();
-        this.postId = postId;
+        this.CourseId = CourseId;
 //        this.member = member;
     }
 
