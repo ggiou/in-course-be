@@ -1,6 +1,8 @@
 package com.example.week08.controller;
 
 import com.example.week08.domain.Post;
+import com.example.week08.dto.request.PostPlaceDto;
+import com.example.week08.dto.request.PostPlacePutDto;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.service.PostService;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,7 +24,7 @@ public class PostController {
 
     // 코스 게시글 작성
     @PostMapping( "/api/course")
-    public Post createPost(@RequestPart(value = "data") PostRequestDto requestDto,
+    public Post createPost(@RequestPart(value = "data") PostPlaceDto requestDto,
                            @RequestPart(value = "image" ,required = false) MultipartFile image) throws IOException {
         return postService.postCreate(requestDto, image);
     }
@@ -41,7 +44,7 @@ public class PostController {
     // 코스(게시글) 수정
     @PutMapping( "/api/course/{courseId}")
     public Post updatePost(@PathVariable Long courseId,
-                           @RequestPart(value = "data") PostRequestDto requestDto,
+                           @Valid @RequestPart(value = "data") PostPlacePutDto requestDto,
                            @RequestPart(value = "image" ,required = false) MultipartFile image) throws IOException {
         return postService.postUpdate(courseId, requestDto, image);
     }

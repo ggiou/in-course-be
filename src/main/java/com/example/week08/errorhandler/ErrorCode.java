@@ -27,6 +27,9 @@ public enum ErrorCode {
     //POST
     POST_NOT_EXIST(400, "P001", "POST_NOT_EXIST"),
 
+    //PLACE
+    PLACE_NOT_EXIST(400, "P001", "PLACE_NOT_EXIST"),
+
 
     //COMMENT
     COMMENT_NOT_EXIST(400, "C001", "COMMENT_NOT_EXIST"),

@@ -4,11 +4,13 @@ import com.amazonaws.services.ec2.model.EventType;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.request.ScoreRequestDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 @Builder
 @Getter
@@ -125,7 +127,10 @@ public class Post extends Timestamped {
 //    public boolean validateMember(Member member) {
 //        return !this.member.equals(member);
 //    }
-
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "CourseId")
+    @JsonManagedReference
+    private List<Place> place;
     // 코스(게시글) 작성
     public Post(PostRequestDto postRequestDto, String image) {
         this.title = postRequestDto.getTitle();
@@ -163,6 +168,10 @@ public class Post extends Timestamped {
         this.score += requestDto.getScore();
         this.num += 1;
         this.avgScore = (score/num);
+    }
+    public void setPlace(Place place) {
+        this.place.add(place);
+        place.setPost(this);
     }
 
 }

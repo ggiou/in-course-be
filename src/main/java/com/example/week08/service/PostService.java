@@ -1,10 +1,14 @@
 package com.example.week08.service;
 
 import com.example.week08.domain.Post;
+import com.example.week08.dto.request.PlacePutDto;
+import com.example.week08.dto.request.PostPlaceDto;
+import com.example.week08.dto.request.PostPlacePutDto;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
+import com.example.week08.repository.PlaceRepository;
 import com.example.week08.repository.PostRepository;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -22,20 +26,36 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final S3Uploader s3Uploader;
+    private final PlaceRepository placeRepository;
+    private final PlaceService placeService;
 
     // 코스 게시글 작성
     @Transactional
-    public Post postCreate(PostRequestDto postRequestDto, MultipartFile image) throws IOException {
+    public Post postCreate(PostPlaceDto postPlaceDto, MultipartFile image) throws IOException {
 
         String postImage = s3Uploader.upload(image, "static");
-        Post post = new Post(postRequestDto, postImage);
-        return postRepository.save(post);
+        Post post = new Post(postPlaceDto.getPostRequestDto(), postImage);
+
+        Long courseId = postRepository.save(post).getId();
+
+        for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
+
+            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i)
+//                    , member
+            );
+        }
+
+
+        return post;
     }
 
     // 코스(게시글) 단건 조회
     @Transactional
     public PostResponseDto getPost(Long courseId) {
-        Post post = postRepository.findById(courseId).orElseThrow(
+//        Post post = postRepository.findById(courseId).orElseThrow(
+//                () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
+//        );
+        Post post = postRepository.findByJoinPlace(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         return new PostResponseDto(post);
@@ -53,7 +73,7 @@ public class PostService {
 
     // 코스 게시글 수정
     @Transactional
-    public Post postUpdate(Long courseId, PostRequestDto postRequestDto, MultipartFile image) throws IOException {
+    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, MultipartFile image) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -68,7 +88,15 @@ public class PostService {
             s3Uploader.deleteImage(deleteUrl);
             imageUrl = s3Uploader.upload(image, "static");
         }
-        post.update(postRequestDto, imageUrl);
+        post.update(postPlacePutDto.getPostRequestDto(), imageUrl);
+
+        for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
+
+            PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
+            placeService.placeUpdate(place
+//                    , member
+            );
+        }
 
         return post;
     }
