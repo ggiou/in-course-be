@@ -56,5 +56,13 @@ public class PostController {
         return ResponseEntity.ok("게시물 삭제 성공");
     }
 
+    // 코스(게시글) 카테고리 조회
+    @GetMapping("/api/course/category")
+    public List<PostResponseDto> findAll(@RequestBody(required = false) PostRequestDto requestDto){
+//        if (requestDto == null) return postService.findAll();
+        return postService.findPost(requestDto);
+    }
+
+
 
 }
