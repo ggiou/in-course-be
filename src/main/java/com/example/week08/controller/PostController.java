@@ -44,7 +44,7 @@ public class PostController {
     // 코스(게시글) 수정
     @PutMapping( "/api/course/{courseId}")
     public Post updatePost(@PathVariable Long courseId,
-                           @Valid @RequestPart(value = "data") PostPlacePutDto requestDto,
+                           @RequestPart(value = "data") PostPlacePutDto requestDto,
                            @RequestPart(value = "image" ,required = false) MultipartFile image) throws IOException {
         return postService.postUpdate(courseId, requestDto, image);
     }

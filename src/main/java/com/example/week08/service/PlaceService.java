@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 
 import static com.example.week08.errorhandler.ErrorCode.PLACE_NOT_EXIST;
+import static com.example.week08.errorhandler.ErrorCode.POST_NOT_EXIST;
 
 
 @Service
@@ -37,16 +38,16 @@ public class PlaceService {
     {
 //        String imageDefault = "https://dh-s3-bucket01.s3.ap-northeast-2.amazonaws.com/%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png";
 
-//        Post post = postRepository.findById(placeRequestDto.getPostId()).orElseThrow(
-//                () -> new BusinessException("추천 코스가 존재하지 않습니다.", POST_NOT_EXIST)
-//        ); //카드가 작성되는 시점에 포스트가 존재할 수 없음(같이 작성되기 때문)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Post post = postRepository.findById(courseId).orElseThrow(
+                () -> new BusinessException("추천 코스가 존재하지 않습니다.", POST_NOT_EXIST)
+        );
 
 //        if (placeRequestDto.getImage() == null){
 //            placeRequestDto.setImage(imageDefault);
 //        }
 //        String placeImage = s3Uploader.upload(image, "static");
 
-        Place place = new Place(courseId, placeRequestDto
+        Place place = new Place(post, placeRequestDto
 //                , member
         );
         placeRepository.save(place);
@@ -54,12 +55,15 @@ public class PlaceService {
 
     //카드 삭제
     @Transactional
-    public void placeDelete(Long placeId
+    public void placeDelete( Long placeId
 //            , Member member
     ) {
         Place place = placeRepository.findById(placeId).orElseThrow(() ->
                 new BusinessException("카드가 존재하지 않습니다.", PLACE_NOT_EXIST)
         );
+//        Post post = postRepository.findById(courseId).orElseThrow(
+//                () -> new BusinessException("추천 코스가 존재하지 않습니다.", POST_NOT_EXIST)
+//        );
 //        if (!place.getMember().getId().equals(member.getId())) {
 //            throw new IllegalArgumentException("수정 권한이 없습니다.");
 //        }
@@ -68,17 +72,20 @@ public class PlaceService {
 
     //카드 수정
     @Transactional
-    public void placeUpdate(PlacePutDto placePutDto
+    public void placeUpdate(Long courseId, PlacePutDto placePutDto
 //            , Member member
     ) {
         Place place = placeRepository.findById(placePutDto.getPlaceId()).orElseThrow(() ->
                 new BusinessException("카드가 존재하지 않습니다.", PLACE_NOT_EXIST)
         );
+        Post post = postRepository.findById(courseId).orElseThrow(
+                () -> new BusinessException("추천 코스가 존재하지 않습니다.", POST_NOT_EXIST)
+        );
 //        if (!place.getMember().getId().equals(member.getId())) {
 //            throw new IllegalArgumentException("수정 권한이 없습니다.");
 //        }
 
-        place.update(placePutDto);
+        place.update(place, placePutDto, post);
     }
 
 }

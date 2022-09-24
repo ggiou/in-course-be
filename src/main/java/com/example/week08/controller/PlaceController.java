@@ -35,7 +35,6 @@ public class PlaceController {
         placeService.placeDelete(placeId
 //                , userDetails.getMember()
         );
-
         return ResponseEntity.ok("카드 삭제 성공");
     }
 //    //카드 수정

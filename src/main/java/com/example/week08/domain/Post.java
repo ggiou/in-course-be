@@ -127,10 +127,12 @@ public class Post extends Timestamped {
 //    public boolean validateMember(Member member) {
 //        return !this.member.equals(member);
 //    }
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "CourseId")
-    @JsonManagedReference
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL
+//            , orphanRemoval = true
+    )
+    @JoinColumn(name = "Course_Id")
     private List<Place> place;
+
     // 코스(게시글) 작성
     public Post(PostRequestDto postRequestDto, String image) {
         this.title = postRequestDto.getTitle();

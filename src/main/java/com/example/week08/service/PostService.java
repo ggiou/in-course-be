@@ -1,5 +1,6 @@
 package com.example.week08.service;
 
+import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.PlacePutDto;
 import com.example.week08.dto.request.PostPlaceDto;
@@ -93,7 +94,7 @@ public class PostService {
         for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
 
             PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
-            placeService.placeUpdate(place
+            placeService.placeUpdate(courseId, place
 //                    , member
             );
         }
@@ -115,6 +116,8 @@ public class PostService {
         String deleteUrl = image.substring(image.indexOf("static")); //이미지
         //s3에서 이미지 삭제
         s3Uploader.deleteImage(deleteUrl);
+        //포스트 아이디가 같은 카드 가져오기
+
         postRepository.deleteById(courseId);
     }
 

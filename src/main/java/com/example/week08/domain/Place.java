@@ -37,19 +37,19 @@ public class Place extends Timestamped {
     @Column
     private String image;//이미지 url사용할거
 
-    @Column(nullable = false)
-    private Long CourseId;
+//    @Column(nullable = false)
+//    private Long Course_id;
 
-    @ManyToOne
-    @JoinColumn(name = "Member_id", nullable = false)
-    private Member member;
+//    @ManyToOne
+//    @JoinColumn(name = "Member_id", nullable = false)
+//    private Member member;
 
-    @JoinColumn(name = "CourseId", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Course_id")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private Post post;
 
-    public Place(Long CourseId, PlaceRequestDto placeRequestDto
+    public Place(Post post, PlaceRequestDto placeRequestDto
 //            , Member member
     ) {
         this.content = placeRequestDto.getContent();
@@ -57,15 +57,16 @@ public class Place extends Timestamped {
         this.coordinateX = placeRequestDto.getCoordinateX();
         this.coordinateY = placeRequestDto.getCoordinateY();
         this.image = placeRequestDto.getImage();
-        this.CourseId = CourseId;
+        this.post = post;
 //        this.member = member;
     }
 
-    public void update(PlacePutDto placePutDto) {
+    public void update(Place place, PlacePutDto placePutDto, Post post) {
         this.content = placePutDto.getContent();
         this.address = placePutDto.getAddress();
         this.coordinateX = placePutDto.getCoordinateX();
         this.coordinateY = placePutDto.getCoordinateY();
         this.image = placePutDto.getImage();
+        this.post = post;
     }
 }
