@@ -5,6 +5,11 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 application.properties
+<<<<<<< HEAD
+application-keys.properties
+=======
+aws-s3.yml
+>>>>>>> 3a6521b5e1714bc3551a986cb920961ec3ba44bb
 
 ### STS ###
 .apt_generated
