@@ -1,7 +1,9 @@
 package com.example.week08.errorhandler;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
     // Common
@@ -23,13 +25,18 @@ public enum ErrorCode {
 
     //JWT
     JWT_NOT_PERMIT(400, "J001", "JWT is NOT PERMIT(존재하지 않는 Token 입니다.)"),
+    JWT_INVALID_TOKEN(401, "J002", "TOKEN IS INVALID(토큰이 유효하지 않습니다.)"),
 
     //email
     MAIL_SEND_FAIL(500, "M001", "Transmission failed(메일 전송에 실패했습니다.)"),
-    MAIL_AUTH_INCORRECT(400, "M002", "Auth key is incorrect(인증 키가 올바르지 않습니다.)"),;
+    MAIL_AUTH_INCORRECT(400, "M002", "Auth key is incorrect(인증 키가 올바르지 않습니다.)"),
+
+    //file
+    FILE_NO_EXIST(500, "F001", "File is no exixt(파일이 존재하지 않습니다.)")
+    ;
     private final String code;
     private final String message;
-    private  int status;
+    private final int status;
 
     ErrorCode(final int status, final String code, final String message) {
         this.status = status;

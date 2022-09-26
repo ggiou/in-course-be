@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -62,9 +63,11 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/member/**").permitAll()
-                .antMatchers("/api/mail/**").permitAll()
+                .antMatchers("/mypage/**").authenticated()
                 .antMatchers("/h2-console/**").permitAll()
-
+                .antMatchers("/mypage/**").authenticated()
+                .antMatchers(HttpMethod.GET, "/course/**").permitAll()
+                .antMatchers("/course/map").permitAll()
 
                 .anyRequest().authenticated()
 

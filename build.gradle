@@ -38,6 +38,10 @@ dependencies {
     implementation 'com.h2database:h2'
     //mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    //kakao
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'com.google.code.gson:gson:2.8.7'
+
 
 }
 

@@ -46,6 +46,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
+
     public TokenDto generateTokenDto(Member member){
         long now = (new Date().getTime());
 

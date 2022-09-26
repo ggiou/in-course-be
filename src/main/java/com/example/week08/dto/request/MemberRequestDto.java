@@ -13,12 +13,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class MemberRequestDto {
     @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-z]+$", message = "이메일 형식으로 입력해 주십시오.")
+    @Pattern(regexp = "^[?=.*!a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-z]+$", message = "이메일 형식으로 입력해 주십시오.")
     private String email;
-
-    @NotBlank
-    @Size(min = 1, max = 12)
-    private String nickname;
 
     @NotBlank
     @Size(min = 8, max = 20)

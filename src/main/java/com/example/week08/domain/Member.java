@@ -1,13 +1,11 @@
 package com.example.week08.domain;
 
 
+import com.example.week08.dto.request.ProfileRequestDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -27,23 +25,32 @@ public class Member extends Timestamped{
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = true)
+    @Column
     private String profileImage;
+
+    @Column
+    private String location;
 
     @Column(unique = true)
     private Long kakaoId;
 
     @Column(unique = true)
-    private Long naverId;
+    private String naverId;
 
     @Column(nullable = false)
     private int emailAuth;
+
+    @PrePersist
+    public void prePersist(){
+        this.location = this.location == null ? "현재 위치가 지정되어있지 않습니다." : this.location;
+        this.nickname = this.nickname == null ? "현재 닉네임이 지정되어있지 않습니다." : this.nickname;
+    }
 
     @Override
     public boolean equals(Object o){
@@ -55,6 +62,19 @@ public class Member extends Timestamped{
         }
         Member member = (Member) o;
         return id != null && Objects.equals(id, member.id);
+    }
+
+
+    public void update(String nickname, String location, String newPassword, String imageUrl){
+        this.nickname = nickname;
+        this.location = location;
+        this.password = newPassword;
+        this.profileImage = imageUrl;
+    }
+
+    public void detialSignup(String nickname, String location){
+        this.nickname = nickname;
+        this.location = location;
     }
 
     public void setEmailAuth(){this.emailAuth = 1;} //이메일 인증 완료 된 상태
