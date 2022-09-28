@@ -71,8 +71,8 @@ public class KakaoMemberService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "58a918ce1a7631c2f849c76b91744d19"); //프론트 클라이언트 ID, 시크릿 받아오기
-        body.add("client_secret", "LITCGKUE456jAiblUawF5d1NEgFeZ4eP");
+        body.add("client_id", ""); //프론트 클라이언트 ID, 시크릿 받아오기
+        body.add("client_secret", "");
         body.add("redirect_uri", "http://192.168.1.32:3000/kakao"); //카카오 어디서 받아올지 프론트
         body.add("code", code);
 
