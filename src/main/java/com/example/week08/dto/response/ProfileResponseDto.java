@@ -15,15 +15,20 @@ public class ProfileResponseDto {
     private String email;
     private String nickname;
     private String location;
-    private String profileImage;
+    private String image;
     private String password;
+
+    private String naverId;
+    private Long kakaoId;
 
     public ProfileResponseDto(Member member){
         this.id = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
         this.location = member.getLocation();
-        this.profileImage = member.getProfileImage();
+        this.image = member.getProfileImage();
         this.password = member.getPassword();
+        this.naverId = member.getNaverId();
+        this.kakaoId = member.getKakaoId();
     }
 }

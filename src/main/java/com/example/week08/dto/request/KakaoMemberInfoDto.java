@@ -24,7 +24,7 @@ public class KakaoMemberInfoDto {
     public KakaoMemberInfoDto(TokenDto tokenDto, Member member) {
         this.ok = true;
         this.message = member.getNickname()+"의 카카오 로그인에 성공하였습니다.";
-        this.Authorization =tokenDto.getAccessToken();
+        this.Authorization ="Bearer "+tokenDto.getAccessToken();
         this.RefreshToken = tokenDto.getRefreshToken();
         this.email = member.getEmail();
         this.nickname = member.getNickname();

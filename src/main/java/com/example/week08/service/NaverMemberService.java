@@ -71,11 +71,11 @@ public class NaverMemberService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "X7Ek1tyoUOUuuk_xRNjx"); //프론트 클라이언트 ID, 시크릿 받아오기
-        body.add("client_secret", "G2TRHuei5W");
-        body.add("redirect_uri", "http://localhost:8080/api/member/naver"); //네이버 어디서 받아올지 프론트
+        body.add("client_id", "7Cl6W7UwRoO8Ag75ZlpV"); //프론트 클라이언트 ID, 시크릿 받아오기
+        body.add("client_secret", "FM8I5KRIWK");
+        body.add("redirect_uri", "http://192.168.1.32:3000/login"); //네이버 어디서 받아올지 프론트
         body.add("code", code);
-        body.add("state", "123");
+        body.add("state", "911");
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest =

@@ -38,7 +38,7 @@ public class MemberResponseDto {
     public MemberResponseDto(TokenDto tokenDto, Member member) {
         this.ok = true;
         this.message ="로그인에 성공하였습니다.";
-        this.Authorization =tokenDto.getAccessToken();
+        this.Authorization ="Bearer "+ tokenDto.getAccessToken();
         this.RefreshToken = tokenDto.getRefreshToken();
         this.email = member.getEmail();
         this.nickname = member.getNickname();

@@ -84,39 +84,40 @@ public class MyPageService {
         if (null == member) {
             throw new BusinessException("수정 권한이 없습니다.", ErrorCode.JWT_INVALID_TOKEN);
         }
-        if (member.getNaverId() != null || member.getKakaoId() != null) {
-            throw new BusinessException("네이버, 카카오로 로그인 한 회원은 정보를 수정할 수 없습니다.", ErrorCode.HANDLE_ACCESS_DENIED);
-        }
+//        if (member.getNaverId() != null || member.getKakaoId() != null) {
+//            throw new BusinessException("네이버, 카카오로 로그인 한 회원은 정보를 수정할 수 없습니다.", ErrorCode.HANDLE_ACCESS_DENIED);
+//        }
 
 
         String imageUrl = member.getProfileImage();
         System.out.println(imageUrl + "             이미지 url\n\n");
         //이미지 존재시 먼저 삭제후 다시 업로드.
 
-        if (imageUrl != null) {
-            String deleteUrl = imageUrl.substring(imageUrl.indexOf("profile"));
-//            deleteUrl = decode
-            System.out.println(deleteUrl + "                 삭제 URL\n\n");
-            s3Uploader.deleteImage(deleteUrl);
-        }
 
         if (profileRequestDto.getImage() == null || profileRequestDto.getImage().isEmpty()) {
-            imageUrl = null;
+            imageUrl = member.getProfileImage();
             System.out.println(imageUrl + "             마이페이지 97\n\n");
 
         } else {
+            if (imageUrl != null && imageUrl.contains("profile")) {
+                String deleteUrl = imageUrl.substring(imageUrl.indexOf("profile"));
+//            deleteUrl = decode
+                System.out.println(deleteUrl + "                 삭제 URL\n\n");
+                s3Uploader.deleteImage(deleteUrl);
+            }
+
             imageUrl = s3Uploader.upload(profileRequestDto.getImage(), "profile");
             System.out.println(imageUrl + "             마이페이지 101\n\n");
         }
         //만약 수정할려는 이미지(이미지 입력이 없으면 무저건 null 반환하게 해둠)
 
         String nickname = profileRequestDto.getNickname();
-        if (nickname == null) {
+        if (nickname == null || nickname.isEmpty()) {
             nickname = member.getNickname();
         }
 
         String location = profileRequestDto.getLocation();
-        if (location == null) {
+        if (location == null || location.isEmpty()) {
             location = member.getLocation();
         }
 
@@ -124,7 +125,7 @@ public class MyPageService {
         String passwordConfirm;
         String newPasswords = profileRequestDto.getPassword();
         String passwordConfirms = profileRequestDto.getPasswordConfirm();
-        if (newPasswords == null) {
+        if (newPasswords == null || newPasswords.isEmpty()) {
             newPassword = member.getPassword();
             passwordConfirm = newPassword;
             System.out.println(newPassword + "\n" + passwordConfirm + "                   비었을 떄\n\n");
