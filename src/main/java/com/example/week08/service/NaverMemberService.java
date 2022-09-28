@@ -71,11 +71,11 @@ public class NaverMemberService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "X7Ek1tyoUOUuuk_xRNjx"); //프론트 클라이언트 ID, 시크릿 받아오기
-        body.add("client_secret", "G2TRHuei5W");
-        body.add("redirect_uri", "http://localhost:8080/api/member/naver"); //네이버 어디서 받아올지 프론트
+        body.add("client_id", ""); //프론트 클라이언트 ID, 시크릿 받아오기
+        body.add("client_secret", "");
+        body.add("redirect_uri", ""); //네이버 어디서 받아올지 프론트
         body.add("code", code);
-        body.add("state", "123");
+        body.add("state", "911");
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest =
@@ -115,11 +115,9 @@ public class NaverMemberService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         String naverId = jsonNode.get("response").get("id").asText();
-        System.out.println(naverId+"      112\n\n");
 
         String nickname = jsonNode.get("response").get("name").asText();
 
-        System.out.println(nickname+"      115\n\n");
 
         String email = jsonNode.get("response").get("email").asText();
         String image = jsonNode.get("response").get("profile_image").asText();
