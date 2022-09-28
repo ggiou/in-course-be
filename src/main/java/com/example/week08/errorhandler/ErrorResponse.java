@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ErrorResponse {
+
     private String message;
     private int status;
     private List<FieldError> errors;
@@ -82,4 +83,6 @@ public class ErrorResponse {
                     .collect(Collectors.toList());
         }
     }
+
+
 }

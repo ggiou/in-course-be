@@ -1,5 +1,8 @@
 package com.example.week08.domain;
 
+import lombok.*;
+
+import javax.persistence.*;
 import com.amazonaws.services.ec2.model.EventType;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.request.ScoreRequestDto;
@@ -30,6 +33,7 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     @Column(nullable = false, length = 500)
     private String image;
 
@@ -38,6 +42,20 @@ public class Post extends Timestamped {
 //    private Place place;
 
     @Column(nullable = false)
+    private String category;
+
+    @Column(nullable = false)
+    private String tag;
+
+    @Column
+    private int score;
+
+    @Column(nullable = false)
+    private int heart;
+
+//    @JoinColumn(name = "member_id", nullable = false)
+   @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
     private String weather;
     @Getter
     public enum Weather {
@@ -127,6 +145,14 @@ public class Post extends Timestamped {
 //    public boolean validateMember(Member member) {
 //        return !this.member.equals(member);
 //    }
+
+    // 찜하기 상태 동기화
+    public void syncHeart(int num) {
+        this.heart = (num);
+    }
+
+}
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL
 //            , orphanRemoval = true
     )
