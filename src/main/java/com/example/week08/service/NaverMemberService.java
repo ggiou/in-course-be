@@ -71,9 +71,9 @@ public class NaverMemberService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", ""); //프론트 클라이언트 ID, 시크릿 받아오기
-        body.add("client_secret", "");
-        body.add("redirect_uri", ""); //네이버 어디서 받아올지 프론트
+        body.add("client_id", "7Cl6W7UwRoO8Ag75ZlpV"); //프론트 클라이언트 ID, 시크릿 받아오기
+        body.add("client_secret", "FM8I5KRIWK");
+        body.add("redirect_uri", "http://192.168.1.32:3000/login"); //네이버 어디서 받아올지 프론트
         body.add("code", code);
         body.add("state", "911");
 
