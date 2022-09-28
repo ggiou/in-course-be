@@ -14,11 +14,17 @@ public class BusinessException extends RuntimeException{
 
     public BusinessException(String message, ErrorCode errorCode) {
         this.message = message;
+public class BusinessException extends RuntimeException{
+    private ErrorCode errorCode;
+
+    public BusinessException(String message, ErrorCode errorCode) {
+        super(message);
         this.errorCode = errorCode;
     }
 
     public BusinessException(ErrorCode errorCode) {
         this.message = errorCode.getMessage();
+        super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 
@@ -28,3 +34,4 @@ public class BusinessException extends RuntimeException{
 
 }
 //요구사항에 맞지 않을 경우 발생기키는 Exception(예외처리)
+}

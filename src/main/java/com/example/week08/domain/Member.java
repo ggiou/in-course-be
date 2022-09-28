@@ -18,6 +18,18 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 public class Member extends Timestamped{
+import lombok.*;
+
+import javax.persistence.*;
+
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -86,4 +98,5 @@ public class Member extends Timestamped{
             throw new BusinessException("로그인이 실패하였습니다, 비밀번호를 확인해 주세요.", ErrorCode.LOGIN_INPUT_INVALID);
         }
     }
+
 }

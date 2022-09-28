@@ -6,6 +6,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
+
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+public enum ErrorCode {
+
     // Common
     INVALID_INPUT_VALUE(400, "C001", " Invalid Input Value"),
     METHOD_NOT_ALLOWED(405, "C002", " Invalid Input Value"),
@@ -37,6 +42,36 @@ public enum ErrorCode {
     private final String code;
     private final String message;
     private final int status;
+
+    // Member
+    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
+    LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
+    EMAIL_INPUT_INVALID(400, "M002", "Sign input is invalid"),
+
+    MEMBER_NOT_EXIST(400, "M001", "MEMBER_NOT_EXIST"),
+
+    //JWT
+    JWT_NOT_PERMIT(400, "J001", "JWT is NOT PERMIT"),
+
+    //POST
+    POST_NOT_EXIST(400, "P001", "POST_NOT_EXIST"),
+
+    //PLACE
+    PLACE_NOT_EXIST(400, "P001", "PLACE_NOT_EXIST"),
+
+
+    //COMMENT
+    COMMENT_NOT_EXIST(400, "C001", "COMMENT_NOT_EXIST"),
+    MEMBER_NOT_EQUALS(400, "C002", "MEMBER_NOT_EQUALS"),
+    //SUB COMMENT
+    SUBCOMMENT_NOT_EXIST(400, "C001", "SUBCOMMENT_NOT_EXIST"),
+    //MAIL
+    NUMBER_NOT_PERMIT(400, "M010", "NUMBER_NOT_PERMIT"),
+    EMAIL_NOT_EXIST(400, "M011", "EMAIL_NOT_EXIST"),
+            ;
+    private final String code;
+    private final String message;
+    private int status;
 
     ErrorCode(final int status, final String code, final String message) {
         this.status = status;
