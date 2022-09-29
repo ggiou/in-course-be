@@ -1,5 +1,6 @@
 package com.example.week08.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,29 +34,13 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
     @Column(nullable = false, length = 500)
     private String image;
 
-//    @JoinColumn(name = "place_id", nullable = false)
-//    @OneToMany(fetch = FetchType.LAZY)
-//    private Place place;
+   @JoinColumn(name = "Member_id", nullable = false)
+   @ManyToOne
+   private Member member;
 
-    @Column(nullable = false)
-    private String category;
-
-    @Column(nullable = false)
-    private String tag;
-
-    @Column
-    private int score;
-
-    @Column(nullable = false)
-    private int heart;
-
-//    @JoinColumn(name = "member_id", nullable = false)
-   @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
     private String weather;
     @Getter
     public enum Weather {
@@ -115,10 +100,6 @@ public class Post extends Timestamped {
 
     @ColumnDefault("0")
     private int avgScore;
-
-    //    @Column
-//    private int avgScore;
-//
 //    @Getter
 //    public enum Point {
 //        Bad("20점"), NORMAL("40점"), GOOD("60점"), VERYGOOD("80점"), EXCELLENT("100점");
@@ -133,25 +114,9 @@ public class Post extends Timestamped {
 //        }
 //    }
 
-    @Column
+    @ColumnDefault("0")
     @Min(0)
     private int heart;
-
-//    @JoinColumn(name = "member_id", nullable = false)
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private Member member;
-
-//    // 회원정보 검증
-//    public boolean validateMember(Member member) {
-//        return !this.member.equals(member);
-//    }
-
-    // 찜하기 상태 동기화
-    public void syncHeart(int num) {
-        this.heart = (num);
-    }
-
-}
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL
 //            , orphanRemoval = true
@@ -160,7 +125,7 @@ public class Post extends Timestamped {
     private List<Place> place;
 
     // 코스(게시글) 작성
-    public Post(PostRequestDto postRequestDto, String image) {
+    public Post(PostRequestDto postRequestDto, String image, Member member) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
         this.weather = postRequestDto.getWeather();
@@ -168,6 +133,7 @@ public class Post extends Timestamped {
         this.season = postRequestDto.getSeason();
         this.who = postRequestDto.getWho();
         this.image = image;
+        this.member = member;
     }
 
     // 코스(게시글) 수정
