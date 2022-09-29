@@ -6,11 +6,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ErrorCode {
-
-
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum ErrorCode {
-
     // Common
     INVALID_INPUT_VALUE(400, "C001", " Invalid Input Value"),
     METHOD_NOT_ALLOWED(405, "C002", " Invalid Input Value"),
@@ -37,21 +32,10 @@ public enum ErrorCode {
     MAIL_AUTH_INCORRECT(400, "M002", "Auth key is incorrect(인증 키가 올바르지 않습니다.)"),
 
     //file
-    FILE_NO_EXIST(500, "F001", "File is no exixt(파일이 존재하지 않습니다.)")
-    ;
-    private final String code;
-    private final String message;
-    private final int status;
-
-    // Member
-    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
-    LOGIN_INPUT_INVALID(400, "M002", "Login input is invalid"),
-    EMAIL_INPUT_INVALID(400, "M002", "Sign input is invalid"),
-
-    MEMBER_NOT_EXIST(400, "M001", "MEMBER_NOT_EXIST"),
-
-    //JWT
-    JWT_NOT_PERMIT(400, "J001", "JWT is NOT PERMIT"),
+    FILE_NO_EXIST(500, "F001", "File is no exixt(파일이 존재하지 않습니다.)"),
+//    // Member
+//    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
+//    EMAIL_INPUT_INVALID(400, "M002", "Sign input is invalid"),
 
     //POST
     POST_NOT_EXIST(400, "P001", "POST_NOT_EXIST"),

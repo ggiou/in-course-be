@@ -12,23 +12,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Builder
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-public class Member extends Timestamped{
 import lombok.*;
 
 import javax.persistence.*;
-
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Member {
+public class Member extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
