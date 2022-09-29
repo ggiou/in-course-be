@@ -7,8 +7,10 @@ import com.example.week08.repository.PlaceRepository;
 import com.example.week08.repository.PostRepository;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 
 @Builder
 @Setter
@@ -36,6 +38,10 @@ public class Place extends Timestamped {
 
     @Column
     private String image;//이미지 url사용할거
+
+    @ColumnDefault("0")
+    @Min(0)
+    private int heart_place;
 
 //    @Column(nullable = false)
 //    private Long Course_id;
@@ -69,4 +75,15 @@ public class Place extends Timestamped {
         this.image = placePutDto.getImage();
         this.post = post;
     }
+
+    // 장소(카드) 찜하기
+    public void addHeart() {
+        this.heart_place += 1;
+    }
+
+    // 장소(카드) 찜하기 취소
+    public void deleteHeart() {
+        this.heart_place -= 1;
+    }
+
 }
