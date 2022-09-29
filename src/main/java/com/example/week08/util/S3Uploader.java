@@ -49,8 +49,7 @@ public class S3Uploader {
     }
 
     public void deleteImage(String fileName) throws UnsupportedEncodingException {
-        fileName = URLDecoder.decode(fileName,"UTF-8");
-    public void deleteImage(String fileName) {
+        fileName = URLDecoder.decode(fileName,"UTF-8"); //한글 인코딩
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
@@ -63,15 +62,6 @@ public class S3Uploader {
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
-    //로컬 저장 이미지 삭제
-    private void removeNewFile(File targetFile) {
-        if (targetFile.delete()) {
-            log.info("파일이 삭제되었습니다.");
-        } else {
-                        .withCannedAcl(CannedAccessControlList.PublicRead)	// PublicRead 권한으로 업로드 됨
-        );
-        return amazonS3Client.getUrl(bucket, fileName).toString();
-    }
     //로컬 저장 이미지 삭제
     private void removeNewFile(File targetFile) {
         if(targetFile.delete()) {
@@ -87,11 +77,6 @@ public class S3Uploader {
         File convertFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         //지정된 경로에 파일이 생성
         if (convertFile.createNewFile()) {
-    private Optional<File> convert(MultipartFile file) throws  IOException {
-        //로컬에 파일저장 : 파일의 기존 이름 가져와서 저장
-        File convertFile = new File(file.getOriginalFilename());
-        //지정된 경로에 파일이 생성
-        if(convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());
             }
@@ -99,8 +84,4 @@ public class S3Uploader {
         }
         return Optional.empty();
     }
-}
-
-
-
 }
