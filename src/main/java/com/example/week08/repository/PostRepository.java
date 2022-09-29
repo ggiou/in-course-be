@@ -2,14 +2,6 @@ package com.example.week08.repository;
 
 import com.example.week08.domain.Member;
 import com.example.week08.domain.Post;
-import com.example.week08.dto.response.PostResponseDto;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
-
-
-public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findAllByMember(Member member);
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,7 +14,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
     List<Post> findAllByOrderByModifiedAtDesc();
-//    List<Post> findAllByMember(Member member);
+    List<Post> findAllByMember(Member member);
 
     @Query(value = "SELECT c" +
             " FROM Post c" +
@@ -35,5 +27,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     @Override
     List<Post> findAll(Specification<Post> spec);
 
+    @Query(value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% OR p.weather LIKE %:keyword% OR p.region LIKE %:keyword% OR p.season LIKE %:keyword% OR p.who LIKE %:keyword%")
+    List<Post> findAllSearch(String keyword);
 
 }
