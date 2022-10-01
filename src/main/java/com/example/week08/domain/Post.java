@@ -1,5 +1,6 @@
 package com.example.week08.domain;
 
+import com.example.week08.util.Scheduler;
 import lombok.*;
 
 import javax.persistence.*;
@@ -7,11 +8,7 @@ import com.amazonaws.services.ec2.model.EventType;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.request.ScoreRequestDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -33,7 +30,6 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
     @Column(nullable = false, length = 500)
     private String image;
 
@@ -46,12 +42,6 @@ public class Post extends Timestamped {
 
     @Column(nullable = false)
     private String tag;
-
-    @Column
-    private int score;
-
-    @Column(nullable = false)
-    private int heart;
 
 //    @JoinColumn(name = "member_id", nullable = false)
    @ManyToOne(fetch = FetchType.LAZY)
@@ -116,6 +106,9 @@ public class Post extends Timestamped {
     @ColumnDefault("0")
     private int avgScore;
 
+    @ColumnDefault("true")
+    private boolean newPost;
+
     //    @Column
 //    private int avgScore;
 //
@@ -151,7 +144,6 @@ public class Post extends Timestamped {
         this.heart = (num);
     }
 
-}
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL
 //            , orphanRemoval = true
@@ -179,6 +171,9 @@ public class Post extends Timestamped {
         this.season = postRequestDto.getSeason();
         this.who = postRequestDto.getWho();
         this.image = image;
+    }
+    public void updatePostByNewPost(boolean newPost) {
+        this.newPost = newPost;
     }
 
     // 코스(게시글) 찜하기

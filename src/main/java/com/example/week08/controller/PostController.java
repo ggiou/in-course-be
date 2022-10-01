@@ -3,6 +3,7 @@ package com.example.week08.controller;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.PostPlaceDto;
 import com.example.week08.dto.request.PostPlacePutDto;
+import com.example.week08.dto.request.PostRecommendedDto;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.service.PostService;
@@ -51,7 +52,7 @@ public class PostController {
 
     // 코스(게시글) 삭제
     @DeleteMapping( "/api/course/{courseId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long courseId) {
+    public ResponseEntity<String> deletePost(@PathVariable Long courseId) throws IOException{
         postService.postDelete(courseId);
         return ResponseEntity.ok("게시물 삭제 성공");
     }
@@ -61,6 +62,17 @@ public class PostController {
     public List<PostResponseDto> findAll(@RequestBody(required = false) PostRequestDto requestDto){
 //        if (requestDto == null) return postService.findAll();
         return postService.findPost(requestDto);
+    }
+//    //메인 날씨/지역/계절/평점 기반 추천
+//    @GetMapping("/api/course/member/recommended")
+//    public List<PostResponseDto> recommendedGet(){
+//        return postService.getRecommended();
+//    }
+
+    //메인 날씨/지역/계절/평점 기반 추천
+    @GetMapping("/api/course/recommended")
+    public List<PostResponseDto> commonRecommendedGet(){
+        return postService.getCommonRecommended();
     }
 
 

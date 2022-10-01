@@ -51,6 +51,13 @@ public class Member extends Timestamped{
     @Column(nullable = false)
     private int emailAuth;
 
+    @Column
+    private String weather = "SUNNY";
+    @Column
+    private String region = "CAPITAL";
+    @Column
+    private String season = "SPRING";
+
     @PrePersist
     public void prePersist(){
         this.location = this.location == null ? "현재 위치가 지정되어있지 않습니다." : this.location;

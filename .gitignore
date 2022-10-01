@@ -9,7 +9,6 @@ build/
 application-keys.properties
 email.properties
 application.properties
-application-keys.properties
 aws-s3.yml
 
 
