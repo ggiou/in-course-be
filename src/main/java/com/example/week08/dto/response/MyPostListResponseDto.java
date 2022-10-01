@@ -23,9 +23,7 @@ public class MyPostListResponseDto {
                             .content(post.getContent())
                             .image(post.getImage())
 //                            .place(post.getPlace)
-                            .category(post.getCategory())
-                            .tag(post.getTag())
-                            .score(post.getScore())
+                            .avgScore(post.getAvgScore())
                             .heart(post.getHeart())
                             .member(post.getMember())
                     .build());
