@@ -21,10 +21,7 @@ public class MyHeartListDto {
                     .title(post.get().getTitle())
                     .content(post.get().getContent())
                     .image(post.get().getImage())
-//                            .place(post.get().getPlace)
-                    .category(post.get().getCategory())
-                    .tag(post.get().getTag())
-                    .score(post.get().getScore())
+                    .avgScore(post.get().getAvgScore())
                     .heart(post.get().getHeart())
                     .member(post.get().getMember())
                     .build());

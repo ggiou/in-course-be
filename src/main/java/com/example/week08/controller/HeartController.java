@@ -1,9 +1,11 @@
 package com.example.week08.controller;
 
+import com.example.week08.domain.UserDetailsImpl;
 import com.example.week08.service.HeartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,20 @@ public class HeartController {
     @PostMapping( "/api/course/disheart/{courseId}")
     public ResponseEntity<String> deletePostHeart(@PathVariable Long courseId) {
         heartService.deletePostHeart(courseId);
+        return new ResponseEntity<>("찜하기 취소 성공", HttpStatus.OK);
+    }
+
+    // 장소(카드) 찜하기
+    @PostMapping( "/api/course/place/heart/{placeId}")
+    public ResponseEntity<String> addPlaceHeart(@PathVariable Long placeId) {
+        heartService.addPlaceHeart(placeId);
+        return new ResponseEntity<>("찜하기 성공", HttpStatus.OK);
+    }
+
+    // 장소(카드) 찜하기 취소
+    @PostMapping( "/api/course/place/disheart/{placeId}")
+    public ResponseEntity<String> deletePlaceHeart(@PathVariable Long placeId) {
+        heartService.deletePlaceHeart(placeId);
         return new ResponseEntity<>("찜하기 취소 성공", HttpStatus.OK);
     }
 }

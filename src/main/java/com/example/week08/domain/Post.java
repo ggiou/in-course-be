@@ -1,6 +1,5 @@
 package com.example.week08.domain;
 
-import com.example.week08.util.Scheduler;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,9 +32,10 @@ public class Post extends Timestamped {
     @Column(nullable = false, length = 500)
     private String image;
 
-//    @JoinColumn(name = "place_id", nullable = false)
-//    @OneToMany(fetch = FetchType.LAZY)
-//    private Place place;
+   @JoinColumn(name = "Member_id", nullable = false)
+   @ManyToOne(fetch = FetchType.LAZY)
+   private Member member;
+
 
     @Column(nullable = false)
     private String category;
@@ -44,8 +44,6 @@ public class Post extends Timestamped {
     private String tag;
 
 //    @JoinColumn(name = "member_id", nullable = false)
-   @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
     private String weather;
     @Getter
     public enum Weather {
@@ -126,7 +124,7 @@ public class Post extends Timestamped {
 //        }
 //    }
 
-    @Column
+    @ColumnDefault("0")
     @Min(0)
     private int heart;
 
@@ -152,7 +150,7 @@ public class Post extends Timestamped {
     private List<Place> place;
 
     // 코스(게시글) 작성
-    public Post(PostRequestDto postRequestDto, String image) {
+    public Post(PostRequestDto postRequestDto, String image, Member member) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
         this.weather = postRequestDto.getWeather();
@@ -160,10 +158,11 @@ public class Post extends Timestamped {
         this.season = postRequestDto.getSeason();
         this.who = postRequestDto.getWho();
         this.image = image;
+        this.member = member;
     }
 
     // 코스(게시글) 수정
-    public void update(PostRequestDto postRequestDto, String image) {
+    public void update(PostRequestDto postRequestDto, String image, Member member) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
         this.weather = postRequestDto.getWeather();
@@ -171,6 +170,7 @@ public class Post extends Timestamped {
         this.season = postRequestDto.getSeason();
         this.who = postRequestDto.getWho();
         this.image = image;
+        this.member = member;
     }
     public void updatePostByNewPost(boolean newPost) {
         this.newPost = newPost;

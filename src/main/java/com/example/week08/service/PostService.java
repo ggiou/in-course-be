@@ -7,12 +7,10 @@ import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.MemberRepository;
-import com.example.week08.repository.PlaceRepository;
 import com.example.week08.repository.PostRepository;
 import com.example.week08.repository.PostSpecification;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,36 +36,26 @@ public class PostService {
 
     // 코스 게시글 작성
     @Transactional
-    public Post postCreate(PostPlaceDto postPlaceDto, MultipartFile image) throws IOException {
-
+    public Post postCreate(PostPlaceDto postPlaceDto, MultipartFile image, Member member) throws IOException {
         String postImage = s3Uploader.upload(image, "static");
-        Post post = new Post(postPlaceDto.getPostRequestDto(), postImage);
-
+        Post post = new Post(postPlaceDto.getPostRequestDto(), postImage, member);
         Long courseId = postRepository.save(post).getId();
-
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
-
             placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i)
 //                    , member
             );
         }
-
-
         return post;
     }
 
     // 코스(게시글) 단건 조회
     @Transactional
     public PostResponseDto getPost(Long courseId) {
-//        Post post = postRepository.findById(courseId).orElseThrow(
-//                () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
-//        );
         Post post = postRepository.findByJoinPlace(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         return new PostResponseDto(post);
     }
-
 
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
@@ -92,16 +80,24 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    // 코스(게시글) 검색(제목, 내용, 카테고리 검색)
+    @Transactional
+    public List<PostResponseDto> searchPost(String keyword){
+        return postRepository.findAllSearch(keyword)
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+    }
 
     // 코스 게시글 수정
     @Transactional
-    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, MultipartFile image) throws IOException {
+    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, MultipartFile image, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-//        if (!post.getMember().getId().equals(member.getId())) {
-//            throw new IllegalArgumentException("수정 권한이 없습니다.");
-//        }
+        if (!post.getMember().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("수정 권한이 없습니다.");
+        }
 
          String imageUrl = post.getImage();
         //이미지 존재시 먼저 삭제후 다시 업로드.
@@ -110,7 +106,7 @@ public class PostService {
             s3Uploader.deleteImage(deleteUrl);
             imageUrl = s3Uploader.upload(image, "static");
         }
-        post.update(postPlacePutDto.getPostRequestDto(), imageUrl);
+        post.update(postPlacePutDto.getPostRequestDto(), imageUrl, member);
 
         for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
 
@@ -125,20 +121,16 @@ public class PostService {
 
     // 코스(게시글) 삭제
     @Transactional
-    public void postDelete(Long courseId) throws UnsupportedEncodingException {
+    public void postDelete(Long courseId, Member member) throws UnsupportedEncodingException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-//        if (!post.getMember().getId().equals(member.getId())) {
-//            throw new IllegalArgumentException("삭제 권한이 없습니다.");
-//        }
-
-        String image = post.getImage();
-        String deleteUrl = image.substring(image.indexOf("static")); //이미지
-        //s3에서 이미지 삭제
+        if (!post.getMember().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+        String imageUrl = post.getImage();
+        String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
         s3Uploader.deleteImage(deleteUrl);
-        //포스트 아이디가 같은 카드 가져오기
-
         postRepository.deleteById(courseId);
     }
 
