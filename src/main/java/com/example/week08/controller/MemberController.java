@@ -25,7 +25,7 @@ public class MemberController {
     private final KakaoMemberService kakaoMemberService;
     private final NaverMemberService naverMemberService;
     private final NaverLoginApi naverLoginApi;
-    @RequestMapping(value = "/api/member/signup", method = RequestMethod.POST, method = RequestMethod.GET)
+    @RequestMapping(value = "/api/member/signup", method = {RequestMethod.POST,RequestMethod.GET})
     public ResponseEntity<MemberResponseDto> signup(@RequestBody @Valid MemberRequestDto requestDto){
         return memberService.createMember(requestDto);
     }
