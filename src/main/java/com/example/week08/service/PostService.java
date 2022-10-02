@@ -39,9 +39,7 @@ public class PostService {
         Post post = new Post(postPlaceDto.getPostRequestDto(), postImage, member);
         Long courseId = postRepository.save(post).getId();
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
-            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i)
-//                    , member
-            );
+            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), image);
         }
         return post;
     }
@@ -109,9 +107,7 @@ public class PostService {
         for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
 
             PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
-            placeService.placeUpdate(courseId, place
-//                    , member
-            );
+            placeService.placeUpdate(courseId, place, image, member);
         }
 
         return post;
