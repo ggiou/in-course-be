@@ -15,5 +15,5 @@ public class PlacePutDto {
     private String address;
     private String coordinateX;
     private String coordinateY;
-    private String image;
+    private String placeName;
 }

@@ -14,6 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -137,7 +138,7 @@ public class Post extends Timestamped {
     }
 
     // 코스(게시글) 수정
-    public void update(PostRequestDto postRequestDto, String image) {
+    public void update(PostRequestDto postRequestDto, String image, Member member) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
         this.weather = postRequestDto.getWeather();
@@ -145,6 +146,7 @@ public class Post extends Timestamped {
         this.season = postRequestDto.getSeason();
         this.who = postRequestDto.getWho();
         this.image = image;
+        this.member = member;
     }
 
     // 코스(게시글) 찜하기
