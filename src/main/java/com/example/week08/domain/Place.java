@@ -55,7 +55,7 @@ public class Place extends Timestamped {
     @JsonBackReference
     private Post post;
 
-    public Place(Post post, PlaceRequestDto placeRequestDto, String image) {
+    public Place(Post post, PlaceRequestDto placeRequestDto, String image, Member member) {
         this.content = placeRequestDto.getContent();
         this.address = placeRequestDto.getAddress();
         this.coordinateX = placeRequestDto.getCoordinateX();
@@ -63,10 +63,10 @@ public class Place extends Timestamped {
         this.placeName = placeRequestDto.getPlaceName();
         this.placeImage = image;
         this.post = post;
-//        this.member = member;
+        this.member = member;
     }
 
-    public void update(Place place, PlacePutDto placePutDto, Post post, String image) {
+    public void update(PlacePutDto placePutDto, Post post, String image, Member member) {
         this.content = placePutDto.getContent();
         this.address = placePutDto.getAddress();
         this.coordinateX = placePutDto.getCoordinateX();
@@ -74,6 +74,7 @@ public class Place extends Timestamped {
         this.placeName = placePutDto.getPlaceName();
         this.placeImage = image;
         this.post = post;
+        this.member = member;
     }
 
     // 장소(카드) 찜하기
