@@ -73,12 +73,12 @@ public class PostController {
 //    public List<PostResponseDto> recommendedGet(){
 //        return postService.getRecommended();
 //    }
-
-    //메인 날씨/지역/계절/평점 기반 추천
-    @GetMapping("/api/course/recommended")
-    public List<PostResponseDto> commonRecommendedGet(){
-        return postService.getCommonRecommended();
-    }
+//
+//    //메인 날씨/지역/계절/평점 기반 추천
+//    @GetMapping("/api/course/recommended")
+//    public List<PostResponseDto> commonRecommendedGet(){
+//        return postService.getCommonRecommended();
+//    }
 
     // 코스(게시글) 검색(제목, 내용, 카테고리 검색)
     @GetMapping("/api/course/search")

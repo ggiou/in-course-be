@@ -156,32 +156,32 @@ public class PostService {
 //                .collect(Collectors.toList());
 //    }
 
-    //메인 비로그인 유저용 새로운게시물/ 평점기반
-    @Transactional(readOnly = true)
-    public List<PostResponseDto> getCommonRecommended() {
-        Map<String, Object> searchKeys = new HashMap<>();
-        if (post.isNewPost()) searchKeys.put("newpost", post.isNewPost()); //새로운 게시물
-        if (topAvgScore(post) != null) searchKeys.put("topAvgScore", topAvgScore(post));//평점
-
-        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
-                .stream()
-                .map(PostResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public List<Post> topAvgScore(Post post){
-        List<Post> posts = postRepository.findAll();
-        int top = 0;
-        List<Post> topAvgPost = new ArrayList<>();
-        for (int i = 0; i < posts.size(); i++){
-            if (post.getAvgScore()>top){
-                top = post.getAvgScore();
-                topAvgPost.clear();
-                topAvgPost.add(posts.get(i));
-                }
-        }
-    return topAvgPost;
-    }
+//    //메인 비로그인 유저용 새로운게시물/ 평점기반
+//    @Transactional(readOnly = true)
+//    public List<PostResponseDto> getCommonRecommended() {
+//        Map<String, Object> searchKeys = new HashMap<>();
+//        if (post.isNewPost()) searchKeys.put("newpost", post.isNewPost()); //새로운 게시물
+//        if (topAvgScore(post) != null) searchKeys.put("topAvgScore", topAvgScore(post));//평점
+//
+//        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
+//                .stream()
+//                .map(PostResponseDto::new)
+//                .collect(Collectors.toList());
+//    }
+//
+//    @Transactional
+//    public List<Post> topAvgScore(Post post){
+//        List<Post> posts = postRepository.findAll();
+//        int top = 0;
+//        List<Post> topAvgPost = new ArrayList<>();
+//        for (int i = 0; i < posts.size(); i++){
+//            if (post.getAvgScore()>top){
+//                top = post.getAvgScore();
+//                topAvgPost.clear();
+//                topAvgPost.add(posts.get(i));
+//                }
+//        }
+//    return topAvgPost;
+//    }
 
 }
