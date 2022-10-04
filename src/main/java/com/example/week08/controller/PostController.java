@@ -2,6 +2,7 @@ package com.example.week08.controller;
 
 import com.example.week08.domain.Post;
 import com.example.week08.domain.UserDetailsImpl;
+import com.example.week08.dto.request.PlaceDeleteDto;
 import com.example.week08.dto.request.PostPlaceDto;
 import com.example.week08.dto.request.PostPlacePutDto;
 import com.example.week08.dto.request.PostRecommendedDto;
@@ -9,6 +10,7 @@ import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +27,17 @@ public class PostController {
 
     private final PostService postService;
 
-    // 코스 게시글 작성
+//    // 코스 게시글 작성
+//    @PostMapping( "/api/course")
+//    public Post createPost(@RequestPart(value = "data") PostPlaceDto requestDto,
+//                           @RequestPart(value = "image" ,required = false) MultipartFile image,
+//                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+//        return postService.postCreate(requestDto, image, userDetails.getMember());
+//    }
+// 코스 게시글 작성(카드 이미지 통합)
     @PostMapping( "/api/course")
     public Post createPost(@RequestPart(value = "data") PostPlaceDto requestDto,
-                           @RequestPart(value = "image" ,required = false) MultipartFile image,
+                           @RequestPart(value = "image" ,required = false) List<MultipartFile> image,
                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return postService.postCreate(requestDto, image, userDetails.getMember());
     }
@@ -49,7 +58,7 @@ public class PostController {
     @PutMapping( "/api/course/{courseId}")
     public Post updatePost(@PathVariable Long courseId,
                            @RequestPart(value = "data") PostPlacePutDto requestDto,
-                           @RequestPart(value = "image" ,required = false) MultipartFile image,
+                           @RequestPart(value = "image" ,required = false) List<MultipartFile> image,
                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return postService.postUpdate(courseId, requestDto, image, userDetails.getMember());
     }
@@ -57,8 +66,9 @@ public class PostController {
     // 코스(게시글) 삭제
     @DeleteMapping( "/api/course/{courseId}")
     public ResponseEntity<String> deletePost(@PathVariable Long courseId,
-                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws UnsupportedEncodingException {
-        postService.postDelete(courseId, userDetails.getMember());
+                                             @RequestPart(value = "data") PlaceDeleteDto requestDto,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        postService.postDelete(courseId, requestDto, userDetails.getMember());
         return ResponseEntity.ok("게시물 삭제 성공");
     }
 

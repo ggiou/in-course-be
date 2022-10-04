@@ -3,8 +3,6 @@ package com.example.week08.domain;
 
 import com.example.week08.dto.request.PlacePutDto;
 import com.example.week08.dto.request.PlaceRequestDto;
-import com.example.week08.repository.PlaceRepository;
-import com.example.week08.repository.PostRepository;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -37,7 +35,9 @@ public class Place extends Timestamped {
     private String coordinateY;//좌표 y
 
     @Column
-    private String image;//이미지 url사용할거
+    private String placeImage;//이미지 url사용할거
+    @Column
+    private String placeName;
 
     @ColumnDefault("0")
     @Min(0)
@@ -46,34 +46,35 @@ public class Place extends Timestamped {
 //    @Column(nullable = false)
 //    private Long Course_id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "Member_id", nullable = false)
-//    private Member member;
+    @ManyToOne
+    @JoinColumn(name = "Member_id", nullable = false)
+    private Member member;
 
     @JoinColumn(name = "Course_id")
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private Post post;
 
-    public Place(Post post, PlaceRequestDto placeRequestDto
-//            , Member member
-    ) {
+    public Place(Post post, PlaceRequestDto placeRequestDto, String image, Member member) {
         this.content = placeRequestDto.getContent();
         this.address = placeRequestDto.getAddress();
         this.coordinateX = placeRequestDto.getCoordinateX();
         this.coordinateY = placeRequestDto.getCoordinateY();
-        this.image = placeRequestDto.getImage();
+        this.placeName = placeRequestDto.getPlaceName();
+        this.placeImage = image;
         this.post = post;
-//        this.member = member;
+        this.member = member;
     }
 
-    public void update(Place place, PlacePutDto placePutDto, Post post) {
+    public void update(PlacePutDto placePutDto, Post post, String image, Member member) {
         this.content = placePutDto.getContent();
         this.address = placePutDto.getAddress();
         this.coordinateX = placePutDto.getCoordinateX();
         this.coordinateY = placePutDto.getCoordinateY();
-        this.image = placePutDto.getImage();
+        this.placeName = placePutDto.getPlaceName();
+        this.placeImage = image;
         this.post = post;
+        this.member = member;
     }
 
     // 장소(카드) 찜하기

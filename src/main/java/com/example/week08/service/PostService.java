@@ -1,12 +1,13 @@
 package com.example.week08.service;
 
 import com.example.week08.domain.Member;
+import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
-import com.example.week08.repository.MemberRepository;
+import com.example.week08.repository.PlaceRepository;
 import com.example.week08.repository.PostRepository;
 import com.example.week08.repository.PostSpecification;
 import com.example.week08.util.S3Uploader;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,22 +31,34 @@ public class PostService {
     private final PostRepository postRepository;
     private final S3Uploader s3Uploader;
     private final PlaceService placeService;
-    private final MemberRepository memberRepository;
-    private final Post post;
+    private final PlaceRepository placeRepository;
 
-    // 코스 게시글 작성
+    // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
-    public Post postCreate(PostPlaceDto postPlaceDto, MultipartFile image, Member member) throws IOException {
-        String postImage = s3Uploader.upload(image, "static");
+    public Post postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
+        List<String> imgPaths  = s3Uploader.uploadList(image);
+        System.out.println("IMG 경로들 : " + imgPaths);
+        //uploadList에서 받은 이미지 경로 리스트를 하나씩 빼서 첫번째는 post에 나머지는 place에 하나씩 할당해줘야함
+        String postImage = null;
+        List<String> placeImage = new ArrayList<>(1);
+            //만약 imgPaths의 길이가 0이면
+            for (int i = 0; i < imgPaths.size(); i++) {
+                if (i == 0) {
+                    postImage = imgPaths.get(i);
+                }else{
+                    placeImage.add(i-1, imgPaths.get(i));
+
+                }
+            }
+
+
         Post post = new Post(postPlaceDto.getPostRequestDto(), postImage, member);
         Long courseId = postRepository.save(post).getId();
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
-            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i)
-//                    , member
-            );
+            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), placeImage, member);
         }
         return post;
-    }
+        }
 
     // 코스(게시글) 단건 조회
     @Transactional
@@ -89,9 +101,9 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    // 코스 게시글 수정
+    // 코스 게시글 수정(카드 이미지 통합)
     @Transactional
-    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, MultipartFile image, Member member) throws IOException {
+    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, List<MultipartFile> image, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -99,38 +111,64 @@ public class PostService {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
 
-         String imageUrl = post.getImage();
+
+        String imageUrl = post.getImage();
         //이미지 존재시 먼저 삭제후 다시 업로드.
         if (imageUrl != null) {
-            String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
+            String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
             s3Uploader.deleteImage(deleteUrl);
-            imageUrl = s3Uploader.upload(image, "static");
         }
-        post.update(postPlacePutDto.getPostRequestDto(), imageUrl, member);
+        List<String> imgPaths  = s3Uploader.uploadList(image);
+        System.out.println("IMG 경로들 : " + imgPaths);
 
+        String postImage = null;
+        List<String> placeImage = new ArrayList<>(1);
+        //만약 imgPaths의 길이가 0이면
+        for (int i = 0; i < imgPaths.size(); i++) {
+            if (i == 0) {
+                postImage = imgPaths.get(i);
+            }else{
+                placeImage.add(i-1, imgPaths.get(i));
+
+            }
+        }
+        post.update(postPlacePutDto.getPostRequestDto(), postImage, member);
         for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
 
             PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
-            placeService.placeUpdate(courseId, place
-//                    , member
-            );
+            placeService.placeUpdate(courseId, place, placeImage, member);
         }
 
         return post;
     }
 
-    // 코스(게시글) 삭제
+    // 코스(게시글) 삭제(카드이미지 삭제 통합)
     @Transactional
-    public void postDelete(Long courseId, Member member) throws UnsupportedEncodingException {
+    public void postDelete(Long courseId, PlaceDeleteDto placeDeleteDto , Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         if (!post.getMember().getId().equals(member.getId())) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
+        for (int i = 0; i < placeDeleteDto.getPlaceId().size(); i++) {
+            Place place = placeRepository.findById(placeDeleteDto.getPlaceId().get(i)).orElseThrow(() ->
+                    new BusinessException("카드가 존재하지 않습니다.", ErrorCode.PLACE_NOT_EXIST)
+            );
+            String imageUrlPlace = place.getPlaceImage();
+            if (imageUrlPlace != null) {
+                String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
+                s3Uploader.deleteImage(deleteUrl);
+                placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+            }
+        }
+
         String imageUrl = post.getImage();
-        String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
-        s3Uploader.deleteImage(deleteUrl);
+        if (imageUrl != null) {
+            String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
+            s3Uploader.deleteImage(deleteUrl);
+        }
+
         postRepository.deleteById(courseId);
     }
 

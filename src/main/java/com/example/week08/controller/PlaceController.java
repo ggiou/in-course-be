@@ -1,18 +1,14 @@
 package com.example.week08.controller;
 
-import com.example.week08.domain.Place;
-import com.example.week08.domain.Post;
 
-import com.example.week08.dto.request.PlacePutDto;
-import com.example.week08.dto.request.PlaceRequestDto;
-import com.example.week08.dto.request.PostRequestDto;
+
+import com.example.week08.domain.UserDetailsImpl;
 import com.example.week08.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,12 +24,10 @@ public class PlaceController {
 
     //카드 삭제
     @DeleteMapping("/api/course/place/{placeId}")
-    public ResponseEntity<String> deletePlace(@PathVariable Long placeId
-//            , @AuthenticationPrincipal UserDetailsImpl userDetails
+    public ResponseEntity<String> deletePlace(@PathVariable Long placeId, @AuthenticationPrincipal UserDetailsImpl userDetails
     )
     {
-        placeService.placeDelete(placeId
-//                , userDetails.getMember()
+        placeService.placeDelete(placeId, userDetails.getMember()
         );
         return ResponseEntity.ok("카드 삭제 성공");
     }

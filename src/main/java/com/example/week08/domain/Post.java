@@ -9,6 +9,7 @@ import com.example.week08.dto.request.ScoreRequestDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.hibernate.annotations.ColumnDefault;
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
