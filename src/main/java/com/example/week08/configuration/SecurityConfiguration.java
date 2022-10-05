@@ -70,6 +70,7 @@ public class SecurityConfiguration {
                 .antMatchers("/course/map").permitAll()
                 .antMatchers("/api/course/common/recommended").permitAll()
                 .antMatchers("/api/course/**").permitAll()
+                .antMatchers("/api/weather/**").permitAll()
 
                 .anyRequest().authenticated()
 
