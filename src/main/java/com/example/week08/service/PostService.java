@@ -5,6 +5,7 @@ import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
+import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.PlaceRepository;
@@ -17,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,9 +69,9 @@ public class PostService {
 
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAllPost() {
+    public List<PostResponseGetDto> getAllPost() {
         return postRepository.findAllByOrderByModifiedAtDesc().stream()
-                .map(PostResponseDto::new)
+                .map(PostResponseGetDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -172,54 +170,49 @@ public class PostService {
         postRepository.deleteById(courseId);
     }
 
-    // 메인 새로운게시물/날씨/지역/계절/평점 기반 추천
-    //newpost true인 게시물만 가져옴
-    //그중 각 카테고리에 맞는 게시물을 가져옴
-    //avgScore값순으로 내림차순정렬하고 그중 첫번째 게시물을 조회
-//    @Transactional(readOnly = true)
-//    public List<PostResponseDto> getRecommended() {
-//        //게시물의 newpost값이 true인 녀석들만 가져옴
-//        //비로그인시에도 추천을 해주려면 맴버에 저장되면 안됨
-//        //저장하지 않고 데이터를 바로 받아오는것도 생각해봐야함
-//        Map<String, Object> searchKeys = new HashMap<>();
-//        if (post.isNewPost()) searchKeys.put("newpost", post.isNewPost()); //새로운 게시물
-//        if (member.getWeather() != null) searchKeys.put("weather", member.getWeather());//날씨
-//        if (member.getRegion() != null) searchKey.put("region", member.getRegion());//지역
-//        if (member.getSeason() != null) searchKeys.put("season", member.getSeason());//계절
-//        if (topAvgScore(post) != null) searchKeys.put("topAvgScore", topAvgScore(post));//평점
-//
-//        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
-//                .stream()
-//                .map(PostResponseDto::new)
-//                .collect(Collectors.toList());
-//    }
+    // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
+    @Transactional(readOnly = true)
+    public List<PostResponseGetDto> getRecommended(Member member) {
 
-//    //메인 비로그인 유저용 새로운게시물/ 평점기반
-//    @Transactional(readOnly = true)
-//    public List<PostResponseDto> getCommonRecommended() {
-//        Map<String, Object> searchKeys = new HashMap<>();
-//        if (post.isNewPost()) searchKeys.put("newpost", post.isNewPost()); //새로운 게시물
-//        if (topAvgScore(post) != null) searchKeys.put("topAvgScore", topAvgScore(post));//평점
-//
-//        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
-//                .stream()
-//                .map(PostResponseDto::new)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Transactional
-//    public List<Post> topAvgScore(Post post){
-//        List<Post> posts = postRepository.findAll();
-//        int top = 0;
-//        List<Post> topAvgPost = new ArrayList<>();
-//        for (int i = 0; i < posts.size(); i++){
-//            if (post.getAvgScore()>top){
-//                top = post.getAvgScore();
-//                topAvgPost.clear();
-//                topAvgPost.add(posts.get(i));
-//                }
-//        }
-//    return topAvgPost;
-//    }
+        Map<String, Object> searchKeys = new HashMap<>();
+        searchKeys.put("newPost", true); //새로운 게시물
+        if (member.getWeather() != null) searchKeys.put("weather", member.getWeather());//날씨
+        if (member.getRegion() != null) searchKeys.put("region", member.getRegion());//지역
+        if (member.getSeason() != null) searchKeys.put("season", member.getSeason());//계절
+        searchKeys.put("avgScore", topAvgScore());//평점
+
+        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
+                .stream()
+                .map(PostResponseGetDto::new)
+                .collect(Collectors.toList());
+    }
+    //메인 비로그인 유저용 새로운게시물/ 평점기반
+    @Transactional(readOnly = true)
+    public List<PostResponseGetDto> getCommonRecommended() {
+
+        Map<String, Object> searchKeys = new HashMap<>();
+        searchKeys.put("newPost", true); //새로운 게시물
+        searchKeys.put("avgScore", topAvgScore());//평점
+
+        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
+                .stream()
+                .map(PostResponseGetDto::new)
+                .collect(Collectors.toList());
+    }
+
+    //평점 평균 최대값
+    @Transactional
+    public int topAvgScore(){
+        //리스트가 아니라 가장 높은 avgScore값을 가져와야함
+        List<Post> post = postRepository.findAll();
+        List<Integer> avgPostList = new ArrayList<>();
+        for (int i = 0; i < post.size(); i++){
+        int avgScores = post.get(i).getAvgScore();
+            avgPostList.add(i, avgScores);
+        }
+
+        int top = avgPostList.stream().max(Integer::compare).orElse(-1);
+    return top;
+    }
 
 }

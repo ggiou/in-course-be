@@ -38,11 +38,11 @@ public class Post extends Timestamped {
    private Member member;
 
 
-    @Column(nullable = false)
-    private String category;
-
-    @Column(nullable = false)
-    private String tag;
+//    @Column(nullable = false)
+//    private String category;
+//
+//    @Column(nullable = false)
+//    private String tag;
 
 //    @JoinColumn(name = "member_id", nullable = false)
     private String weather;
@@ -105,8 +105,8 @@ public class Post extends Timestamped {
     @ColumnDefault("0")
     private int avgScore;
 
-    @ColumnDefault("true")
-    private boolean newPost;
+    @Column
+    private boolean newPost = true;
 
     //    @Column
 //    private int avgScore;

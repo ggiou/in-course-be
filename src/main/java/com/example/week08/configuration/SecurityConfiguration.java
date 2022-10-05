@@ -68,6 +68,8 @@ public class SecurityConfiguration {
                 .antMatchers("/mypage/**").authenticated()
                 .antMatchers(HttpMethod.GET, "/course/**").permitAll()
                 .antMatchers("/course/map").permitAll()
+                .antMatchers("/api/course/common/recommended").permitAll()
+                .antMatchers("/api/course/**").permitAll()
 
                 .anyRequest().authenticated()
 
