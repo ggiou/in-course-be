@@ -43,7 +43,7 @@ public class OpenWeatherService {
         String url = "https://api.openweathermap.org/data/2.5/weather?"//단기 예보 조회
                 + "lat=" + requestDto.getY()//예보지점 y 좌표
                 + "&lon=" + requestDto.getX()//예보지점 x 좌표
-                + "&appid=f9d1d641cc800b6ee625cf4eb732bffe"//인증키
+                + "&appid="//인증키
                 + "&units=metric"//섭씨 온도
                 + "&lang=kr";  //한국어
 
