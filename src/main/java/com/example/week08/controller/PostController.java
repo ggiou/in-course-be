@@ -5,8 +5,10 @@ import com.example.week08.domain.UserDetailsImpl;
 import com.example.week08.dto.request.PlaceDeleteDto;
 import com.example.week08.dto.request.PostPlaceDto;
 import com.example.week08.dto.request.PostPlacePutDto;
+import com.example.week08.dto.request.PostRecommendedDto;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
+import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.apache.bcel.classfile.Code;
@@ -49,7 +51,7 @@ public class PostController {
 
     // 코스(게시글) 전체 조회
     @GetMapping("/api/course")
-    public List<PostResponseDto> getAllPosts() {
+    public List<PostResponseGetDto> getAllPosts() {
         return postService.getAllPost();
     }
 
@@ -76,6 +78,17 @@ public class PostController {
     public List<PostResponseDto> findAll(@RequestBody(required = false) PostRequestDto requestDto){
 //        if (requestDto == null) return postService.findAll();
         return postService.findPost(requestDto);
+    }
+//    //메인 날씨/지역/계절/평점 기반 추천 회원용
+//    @GetMapping("/api/course/member/recommended")
+//    public List<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
+//        return postService.getRecommended(userDetails.getMember());
+//    }
+
+    //메인 평점 기반 추천 비회원용
+    @GetMapping("/api/course/common/recommended")
+    public List<PostResponseGetDto> commonRecommendedGet(){
+        return postService.getCommonRecommended();
     }
 
     // 코스(게시글) 검색(제목, 내용, 카테고리 검색)

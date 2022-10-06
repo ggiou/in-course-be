@@ -1,6 +1,5 @@
 package com.example.week08.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,11 +7,7 @@ import com.amazonaws.services.ec2.model.EventType;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.request.ScoreRequestDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +34,17 @@ public class Post extends Timestamped {
     private String image;
 
    @JoinColumn(name = "Member_id", nullable = false)
-   @ManyToOne
+   @ManyToOne(fetch = FetchType.LAZY)
    private Member member;
 
+
+//    @Column(nullable = false)
+//    private String category;
+//
+//    @Column(nullable = false)
+//    private String tag;
+
+//    @JoinColumn(name = "member_id", nullable = false)
     private String weather;
     @Getter
     public enum Weather {
@@ -101,6 +104,13 @@ public class Post extends Timestamped {
 
     @ColumnDefault("0")
     private int avgScore;
+
+    @Column
+    private boolean newPost = true;
+
+    //    @Column
+//    private int avgScore;
+//
 //    @Getter
 //    public enum Point {
 //        Bad("20점"), NORMAL("40점"), GOOD("60점"), VERYGOOD("80점"), EXCELLENT("100점");
@@ -118,6 +128,21 @@ public class Post extends Timestamped {
     @ColumnDefault("0")
     @Min(0)
     private int heart;
+
+//    @JoinColumn(name = "member_id", nullable = false)
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Member member;
+
+//    // 회원정보 검증
+//    public boolean validateMember(Member member) {
+//        return !this.member.equals(member);
+//    }
+
+    // 찜하기 상태 동기화
+    public void syncHeart(int num) {
+        this.heart = (num);
+    }
+
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL
 //            , orphanRemoval = true
@@ -147,6 +172,9 @@ public class Post extends Timestamped {
         this.who = postRequestDto.getWho();
         this.image = image;
         this.member = member;
+    }
+    public void updatePostByNewPost(boolean newPost) {
+        this.newPost = newPost;
     }
 
     // 코스(게시글) 찜하기

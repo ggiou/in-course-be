@@ -1,12 +1,15 @@
 package com.example.week08.service;
 
 import com.example.week08.domain.Member;
+import com.example.week08.domain.OpenWeatherData;
 import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
+import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
+import com.example.week08.repository.OpenWeatherDataRepository;
 import com.example.week08.repository.PlaceRepository;
 import com.example.week08.repository.PostRepository;
 import com.example.week08.repository.PostSpecification;
@@ -17,21 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostService {
 
     private final PostRepository postRepository;
     private final S3Uploader s3Uploader;
     private final PlaceService placeService;
     private final PlaceRepository placeRepository;
+    private final OpenWeatherDataRepository openWeatherDataRepository;
 
     // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
@@ -71,9 +72,9 @@ public class PostService {
 
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAllPost() {
+    public List<PostResponseGetDto> getAllPost() {
         return postRepository.findAllByOrderByModifiedAtDesc().stream()
-                .map(PostResponseDto::new)
+                .map(PostResponseGetDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -170,6 +171,74 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
+    }
+
+//    // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
+//    @Transactional(readOnly = true)
+//    public List<PostResponseGetDto> getRecommended(Member member) {
+//
+//        Optional<OpenWeatherData> openWeatherData = openWeatherDataRepository.findByMember(member);
+//        Map<String, Object> searchKeys = new HashMap<>();
+//        searchKeys.put("newPost", true); //새로운 게시물
+//        //지역이 'wonju' 처럼 들어오면 '강원'으로 바꿔서 해시맵에 넣어준다
+//        if (openWeatherData.get().getRegion() != null) searchKeys.put("region", openWeatherData.get().getRegion());//지역
+//        //CAPITAL("수도권"), 서울 Seoul 인천 incheon
+//        // 수원 suwon 용인 yongin 성남 seongnam 부천 bucheon 화성 Hwaseong 안산 Ansan 안양 Anyang 평택 Pyeongtaek 시흥 Siheung
+//        // 김포 gimpo 광주 Gwangju 광명 Gwangmyeong 강화 ganghwa 군포 Gunpo 하남 Hanam 오산 Osan 이천 Icheon
+//        // 안성 Anseong 의왕 Uiwang 양평 Yangpyeong 여주 Yeoju 과천 Gwacheon 고양 Goyang 남양주 Namyangju 파주 paju
+//        // 의정부 Uijeongbu 양주 Yangju 구리 Guri 포천 Pocheon 동두천 Dongducheon 가평 Gapyeong 연천 Yeoncheon
+//
+//        // GANGWON("강원") 춘천 Chuncheon 원주 Wonju 강릉 Gangneung 동해 Donghae 태백 Taebaek 속초 Sokcho 삼척 Samcheok
+//        // 홍천 Hongcheon 횡성 Hoengseong 영월 Yeongwol 평창 Pyeongchang 정선 Jeongseon 철원 Cheorwon 화천 Hwacheon 양구 Yanggu
+//        // 인제 Inje 고성 Goseong 양양 Yangyang
+//
+//        // CHUNGBUK("충북")
+//        //청주 Cheongju 충주 Chungju 제천 Jecheon 보은 Boeun
+//        // CHUNGNAM("충남")
+//        // JEONBUK("전북")
+//        // JEONNAM("전남")
+//        // GYEONGBUK("경북")
+//        // GYEONGNAM("경남")
+//        // JEJU("제주")
+//
+////        if (openWeatherData.get().getWeather() != null) searchKeys.put("weather", openWeatherData.get().getWeather());//날씨
+////        if (openWeatherData.get().getRegion() != null) searchKeys.put("region", openWeatherData.get().getRegion());//지역
+//        if (openWeatherData.get().getSeason() != null) searchKeys.put("season", openWeatherData.get().getSeason());//계절
+//        System.out.println(searchKeys);
+//        searchKeys.put("avgScore", topAvgScore());//평점
+//
+//        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
+//                .stream()
+//                .map(PostResponseGetDto::new)
+//                .collect(Collectors.toList());
+//    }
+    //메인 비로그인 유저용 새로운게시물/ 평점기반
+    @Transactional(readOnly = true)
+    public List<PostResponseGetDto> getCommonRecommended() {
+
+        Map<String, Object> searchKeys = new HashMap<>();
+        searchKeys.put("newPost", true); //새로운 게시물
+        searchKeys.put("avgScore", topAvgScore());//평점
+
+        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
+                .stream()
+                .map(PostResponseGetDto::new)
+                .collect(Collectors.toList());
+    }
+
+    //평점 평균 최대값
+    @Transactional
+    public int topAvgScore(){
+        //리스트가 아니라 가장 높은 avgScore값을 가져와야함
+        List<Post> post = postRepository.findAll();
+        List<Integer> avgPostList = new ArrayList<>();
+        for (int i = 0; i < post.size(); i++){
+        int avgScores = post.get(i).getAvgScore();
+            avgPostList.add(i, avgScores);
+        }
+
+        int top = avgPostList.stream().max(Integer::compare).orElse(-1);
+    return top;
     }
 
 }
