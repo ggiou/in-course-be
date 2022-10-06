@@ -22,11 +22,11 @@ GitHub: https://github.com/InCourseProject/in-course-be
 
 :computer: 프로젝트 주요 기능
 -------------  
-### 1) 메인페이지: 코스 추천   
+### 1) 메인페이지: 날씨를 기반으로 오늘의 코스 추천   
 <img src="이미지"></img><br/>       
-### 2) 회원가입: 
+### 2) 회원가입: 이메일 인증을 통한 회원가입, 카카오/네이버를 통한 회원가입
 <img src="이미지"></img><br/>     
-### 3) 로그인 페이지: id, pw 로그인, 로그인 성공시 Headers Response로 Authorization Token, Refresh Token 발급   
+### 3) 로그인 페이지: jwt, 카카오, 네이버 로그인
 <img src="이미지"></img><br/>  
 ### 4) 장소(카드) 작성 페이지: 카드 작성 및 이미지 업로드   
 <img src="이미지"></img><br/>     
@@ -34,7 +34,11 @@ GitHub: https://github.com/InCourseProject/in-course-be
 <img src="이미지"></img><br/>      
 ### 6) 코스(게시글) 수정 페이지: 코스 수정    
 <img src="이미지"></img><br/>  
-### 7) 마이페이지: 내가 쓴 글 조회, 내가 찜한 코스 조회   
+### 7) 코스(게시글) 찜하기: 코스 찜하기  
+<img src="이미지"></img><br/>  
+### 8) 코스(게시글) 점수 주기: 코스 평점  
+<img src="이미지"></img><br/>  
+### 9) 마이페이지: 내가 쓴 글 조회, 내가 찜한 코스 조회   
 <img src="이미지"></img><br/>  
 
 :movie_camera: 시연 영상
@@ -85,9 +89,9 @@ Frontend
 <img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white">
 
 
-
-
-
+    
+        
+            
 
 
 추가할 아이콘
