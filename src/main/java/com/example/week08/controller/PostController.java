@@ -79,13 +79,13 @@ public class PostController {
 //        if (requestDto == null) return postService.findAll();
         return postService.findPost(requestDto);
     }
-    //메인 날씨/지역/계절/평점 기반 추천
-    @GetMapping("/api/course/member/recommended")
-    public List<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return postService.getRecommended(userDetails.getMember());
-    }
+//    //메인 날씨/지역/계절/평점 기반 추천 회원용
+//    @GetMapping("/api/course/member/recommended")
+//    public List<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
+//        return postService.getRecommended(userDetails.getMember());
+//    }
 
-    //메인 날씨/지역/계절/평점 기반 추천
+    //메인 평점 기반 추천 비회원용
     @GetMapping("/api/course/common/recommended")
     public List<PostResponseGetDto> commonRecommendedGet(){
         return postService.getCommonRecommended();
