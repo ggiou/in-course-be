@@ -27,6 +27,7 @@ public class WeatherDataResponseDto {
     public WeatherDataResponseDto(OpenWeatherData data){
         this.member = data.getMember().getNickname();
         this.region = data.getRegion();
+        this.season = data.getSeason();
         this.weather = data.getWeather();
         this.description = data.getDescription();
         this.temp =data.getTemp();
