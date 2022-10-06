@@ -38,7 +38,9 @@ GitHub: https://github.com/InCourseProject/in-course-be
 <img src="이미지"></img><br/>  
 ### 8) 코스(게시글) 점수 주기: 코스 평점  
 <img src="이미지"></img><br/>  
-### 9) 마이페이지: 내가 쓴 글 조회, 내가 찜한 코스 조회   
+### 9) 검색 기능   
+<img src="이미지"></img><br/> 
+### 10) 마이페이지: 내가 쓴 글 조회, 내가 찜한 코스 조회   
 <img src="이미지"></img><br/>  
 
 :movie_camera: 시연 영상
@@ -98,3 +100,21 @@ Frontend
 `Back-end` Java 11, H2, JWT,AWS IAM
 `Front-end` Emotion, heroicons
 
+
+:rage: Trouble Shooting
+------------- 
+BE  
+1) 
+2) 
+3) 
+4)
+5) 
+6)
+
+FE  
+1) 
+2) 
+3) 
+4)
+5) 
+6)
