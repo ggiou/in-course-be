@@ -73,9 +73,9 @@ public class PostService {
 
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public List<PostResponseGetDto> getAllPost() {
+    public List<PostResponseDetailDto> getAllPost() {
         return postRepository.findAllByOrderByModifiedAtDesc().stream()
-                .map(PostResponseGetDto::new)
+                .map(PostResponseDetailDto::new)
                 .collect(Collectors.toList());
     }
 
