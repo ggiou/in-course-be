@@ -35,7 +35,7 @@ public class OpenWeatherService {
     private final TokenProvider tokenProvider;
     private final OpenWeatherDataRepository openWeatherDataRepository;
 
-    @Value("${open.weather.url}")
+//     @Value("${open.weather.url}")
     private String url;
     
     @Transactional
