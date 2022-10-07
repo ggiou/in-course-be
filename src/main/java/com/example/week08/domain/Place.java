@@ -46,16 +46,16 @@ public class Place extends Timestamped {
 //    @Column(nullable = false)
 //    private Long Course_id;
 
-    @ManyToOne
-    @JoinColumn(name = "Member_id", nullable = false)
-    private Member member;
+//    @ManyToOne
+//    @JoinColumn(name = "Member_id", nullable = false)
+//    private Member member;
 
     @JoinColumn(name = "Course_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     private Post post;
 
-    public Place(Post post, PlaceRequestDto placeRequestDto, String image, Member member) {
+    public Place(Post post, PlaceRequestDto placeRequestDto, String image) {
         this.content = placeRequestDto.getContent();
         this.address = placeRequestDto.getAddress();
         this.coordinateX = placeRequestDto.getCoordinateX();
@@ -63,10 +63,9 @@ public class Place extends Timestamped {
         this.placeName = placeRequestDto.getPlaceName();
         this.placeImage = image;
         this.post = post;
-        this.member = member;
     }
 
-    public void update(PlacePutDto placePutDto, Post post, String image, Member member) {
+    public void update(PlacePutDto placePutDto, Post post, String image) {
         this.content = placePutDto.getContent();
         this.address = placePutDto.getAddress();
         this.coordinateX = placePutDto.getCoordinateX();
@@ -74,7 +73,6 @@ public class Place extends Timestamped {
         this.placeName = placePutDto.getPlaceName();
         this.placeImage = image;
         this.post = post;
-        this.member = member;
     }
 
     // 장소(카드) 찜하기

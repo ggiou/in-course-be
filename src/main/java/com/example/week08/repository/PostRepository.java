@@ -31,7 +31,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 
 
 
-
     @Query(value = "SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% OR p.weather LIKE %:keyword% OR p.region LIKE %:keyword% OR p.season LIKE %:keyword% OR p.who LIKE %:keyword%")
     List<Post> findAllSearch(String keyword);
 
