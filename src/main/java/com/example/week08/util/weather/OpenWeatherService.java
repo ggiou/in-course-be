@@ -34,6 +34,7 @@ public class OpenWeatherService {
     private final TokenProvider tokenProvider;
     private final OpenWeatherDataRepository openWeatherDataRepository;
 
+    @Transactional
     public WeatherDataResponseDto restApiGetWeather(WeatherDataRequestDto requestDto, HttpServletRequest request) throws Exception {
         Member member = validateMember(request);
         if (null == member) {
