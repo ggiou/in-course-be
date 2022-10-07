@@ -10,6 +10,7 @@ import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.PostResponseGetDto;
+import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.apache.bcel.classfile.Code;

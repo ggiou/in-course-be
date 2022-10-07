@@ -2,13 +2,10 @@ package com.example.week08.dto.response;
 
 import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
-import com.example.week08.dto.request.PlaceRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -32,7 +29,7 @@ public class PostResponseDetailDto {
     private List<Place> place;
 
 
-    public PostResponseDetailDto(Post post ) {
+    public PostResponseDetailDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
