@@ -59,7 +59,7 @@ public class MyPageService {
         if (null == member) {
             throw new BusinessException(member.getNickname() + "의 찜한 코스를 볼 권한이 없습니다.", ErrorCode.JWT_INVALID_TOKEN);
         }
-        List<Heart> hearts = heartRepository.findByNickname(member.getNickname());
+        List<Heart> hearts = heartRepository.findByEmail(member.getEmail());
         List<Optional<Post>> heartList = new ArrayList<>();
 
         for (Heart heart : hearts) {
