@@ -1,5 +1,5 @@
 # appspec.yml
-#
+
 version: 0.0
 os: linux
 files:
