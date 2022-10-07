@@ -10,10 +10,7 @@ import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
-import com.example.week08.repository.OpenWeatherDataRepository;
-import com.example.week08.repository.PlaceRepository;
-import com.example.week08.repository.PostRepository;
-import com.example.week08.repository.PostSpecification;
+import com.example.week08.repository.*;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +31,7 @@ public class PostService {
     private final PlaceService placeService;
     private final PlaceRepository placeRepository;
     private final OpenWeatherDataRepository openWeatherDataRepository;
-
+    private final HeartRepository heartRepository;
     // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
     public Post postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
@@ -172,6 +169,7 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
+        heartRepository.deleteAllByPostId(courseId);
     }
 
 //    // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
