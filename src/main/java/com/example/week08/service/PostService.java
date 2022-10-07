@@ -7,6 +7,7 @@ import com.example.week08.domain.Post;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.PostResponseGetDto;
+import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.OpenWeatherDataRepository;
