@@ -45,7 +45,7 @@ public class PostController {
 
     // 코스(게시글) 상세 조회
     @GetMapping( "/api/course/{courseId}")
-    public PostResponseDto getPost(@PathVariable Long courseId) {
+    public PostResponseGetDto getPost(@PathVariable Long courseId) {
         return postService.getPost(courseId);
     }
 
