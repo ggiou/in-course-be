@@ -24,10 +24,10 @@ public class PlaceController {
 
     //카드 삭제
     @DeleteMapping("/api/course/place/{placeId}")
-    public ResponseEntity<String> deletePlace(@PathVariable Long placeId, @AuthenticationPrincipal UserDetailsImpl userDetails
+    public ResponseEntity<String> deletePlace(@PathVariable Long placeId
     )
     {
-        placeService.placeDelete(placeId, userDetails.getMember()
+        placeService.placeDelete(placeId
         );
         return ResponseEntity.ok("카드 삭제 성공");
     }

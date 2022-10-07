@@ -5,6 +5,7 @@ import com.example.week08.domain.OpenWeatherData;
 import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.*;
+import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.errorhandler.BusinessException;
@@ -56,25 +57,27 @@ public class PostService {
         Post post = new Post(postPlaceDto.getPostRequestDto(), postImage, member);
         Long courseId = postRepository.save(post).getId();
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
-            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), placeImage, member);
+            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), placeImage);
         }
         return post;
         }
 
     // 코스(게시글) 단건 조회
     @Transactional
-    public PostResponseDto getPost(Long courseId) {
+    public PostResponseDetailDto getPost(Long courseId) {
         Post post = postRepository.findByJoinPlace(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-        return new PostResponseDto(post);
+
+
+        return new PostResponseDetailDto(post);
     }
 
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public List<PostResponseGetDto> getAllPost() {
+    public List<PostResponseDetailDto> getAllPost() {
         return postRepository.findAllByOrderByModifiedAtDesc().stream()
-                .map(PostResponseGetDto::new)
+                .map(PostResponseDetailDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -112,7 +115,6 @@ public class PostService {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }
 
-
         String imageUrl = post.getImage();
         //이미지 존재시 먼저 삭제후 다시 업로드.
         if (imageUrl != null) {
@@ -137,7 +139,7 @@ public class PostService {
         for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
 
             PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
-            placeService.placeUpdate(courseId, place, placeImage, member);
+            placeService.placeUpdate(courseId, place, placeImage);
         }
 
         return post;
@@ -173,45 +175,28 @@ public class PostService {
         postRepository.deleteById(courseId);
     }
 
-//    // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
-//    @Transactional(readOnly = true)
-//    public List<PostResponseGetDto> getRecommended(Member member) {
-//
-//        Optional<OpenWeatherData> openWeatherData = openWeatherDataRepository.findByMember(member);
-//        Map<String, Object> searchKeys = new HashMap<>();
-//        searchKeys.put("newPost", true); //새로운 게시물
-//        //지역이 'wonju' 처럼 들어오면 '강원'으로 바꿔서 해시맵에 넣어준다
+    // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
+    @Transactional(readOnly = true)
+    public List<PostResponseGetDto> getRecommended(Member member) {
+
+        Optional<OpenWeatherData> openWeatherData = openWeatherDataRepository.findByMember(member);
+        Map<String, Object> searchKeys = new HashMap<>();
+        searchKeys.put("newPost", true); //새로운 게시물
+        //지역이 'Wonju' 처럼 들어오면 '강원'으로 바꿔서 해시맵에 넣어준다
+        if (openWeatherData.get().getRegion() != null) searchKeys.put("region", openWeatherData.get().getRegion());//지역
+
+
+//        if (openWeatherData.get().getWeather() != null) searchKeys.put("weather", openWeatherData.get().getWeather());//날씨
 //        if (openWeatherData.get().getRegion() != null) searchKeys.put("region", openWeatherData.get().getRegion());//지역
-//        //CAPITAL("수도권"), 서울 Seoul 인천 incheon
-//        // 수원 suwon 용인 yongin 성남 seongnam 부천 bucheon 화성 Hwaseong 안산 Ansan 안양 Anyang 평택 Pyeongtaek 시흥 Siheung
-//        // 김포 gimpo 광주 Gwangju 광명 Gwangmyeong 강화 ganghwa 군포 Gunpo 하남 Hanam 오산 Osan 이천 Icheon
-//        // 안성 Anseong 의왕 Uiwang 양평 Yangpyeong 여주 Yeoju 과천 Gwacheon 고양 Goyang 남양주 Namyangju 파주 paju
-//        // 의정부 Uijeongbu 양주 Yangju 구리 Guri 포천 Pocheon 동두천 Dongducheon 가평 Gapyeong 연천 Yeoncheon
-//
-//        // GANGWON("강원") 춘천 Chuncheon 원주 Wonju 강릉 Gangneung 동해 Donghae 태백 Taebaek 속초 Sokcho 삼척 Samcheok
-//        // 홍천 Hongcheon 횡성 Hoengseong 영월 Yeongwol 평창 Pyeongchang 정선 Jeongseon 철원 Cheorwon 화천 Hwacheon 양구 Yanggu
-//        // 인제 Inje 고성 Goseong 양양 Yangyang
-//
-//        // CHUNGBUK("충북")
-//        //청주 Cheongju 충주 Chungju 제천 Jecheon 보은 Boeun
-//        // CHUNGNAM("충남")
-//        // JEONBUK("전북")
-//        // JEONNAM("전남")
-//        // GYEONGBUK("경북")
-//        // GYEONGNAM("경남")
-//        // JEJU("제주")
-//
-////        if (openWeatherData.get().getWeather() != null) searchKeys.put("weather", openWeatherData.get().getWeather());//날씨
-////        if (openWeatherData.get().getRegion() != null) searchKeys.put("region", openWeatherData.get().getRegion());//지역
-//        if (openWeatherData.get().getSeason() != null) searchKeys.put("season", openWeatherData.get().getSeason());//계절
-//        System.out.println(searchKeys);
-//        searchKeys.put("avgScore", topAvgScore());//평점
-//
-//        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
-//                .stream()
-//                .map(PostResponseGetDto::new)
-//                .collect(Collectors.toList());
-//    }
+        if (openWeatherData.get().getSeason() != null) searchKeys.put("season", openWeatherData.get().getSeason());//계절
+        System.out.println(searchKeys);
+        searchKeys.put("avgScore", topAvgScore());//평점
+
+        return postRepository.findAll(PostSpecification.searchPost(searchKeys))
+                .stream()
+                .map(PostResponseGetDto::new)
+                .collect(Collectors.toList());
+    }
     //메인 비로그인 유저용 새로운게시물/ 평점기반
     @Transactional(readOnly = true)
     public List<PostResponseGetDto> getCommonRecommended() {

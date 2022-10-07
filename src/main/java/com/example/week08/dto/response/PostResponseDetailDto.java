@@ -1,18 +1,19 @@
 package com.example.week08.dto.response;
 
+import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import java.util.List;
 import java.time.LocalDateTime;
 
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostResponseGetDto {
+public class PostResponseDetailDto {
     private Long id;
     private String title;
     private String content;
@@ -25,9 +26,10 @@ public class PostResponseGetDto {
     private int heart;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<Place> place;
 
 
-    public PostResponseGetDto(Post post) {
+    public PostResponseDetailDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -38,7 +40,9 @@ public class PostResponseGetDto {
         this.who = post.getWho();
         this.avgScore = post.getAvgScore();
         this.heart = post.getHeart();
+        this.place = post.getPlace();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
     }
+
 }

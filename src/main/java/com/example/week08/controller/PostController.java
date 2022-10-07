@@ -7,8 +7,10 @@ import com.example.week08.dto.request.PostPlaceDto;
 import com.example.week08.dto.request.PostPlacePutDto;
 import com.example.week08.dto.request.PostRecommendedDto;
 import com.example.week08.dto.request.PostRequestDto;
+import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.PostResponseGetDto;
+import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.apache.bcel.classfile.Code;
@@ -45,13 +47,13 @@ public class PostController {
 
     // 코스(게시글) 상세 조회
     @GetMapping( "/api/course/{courseId}")
-    public PostResponseDto getPost(@PathVariable Long courseId) {
+    public PostResponseDetailDto getPost(@PathVariable Long courseId) {
         return postService.getPost(courseId);
     }
 
     // 코스(게시글) 전체 조회
     @GetMapping("/api/course")
-    public List<PostResponseGetDto> getAllPosts() {
+    public List<PostResponseDetailDto> getAllPosts() {
         return postService.getAllPost();
     }
 
@@ -79,11 +81,11 @@ public class PostController {
 //        if (requestDto == null) return postService.findAll();
         return postService.findPost(requestDto);
     }
-//    //메인 날씨/지역/계절/평점 기반 추천 회원용
-//    @GetMapping("/api/course/member/recommended")
-//    public List<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
-//        return postService.getRecommended(userDetails.getMember());
-//    }
+    //메인 날씨/지역/계절/평점 기반 추천 회원용
+    @GetMapping("/api/course/member/recommended")
+    public List<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.getRecommended(userDetails.getMember());
+    }
 
     //메인 평점 기반 추천 비회원용
     @GetMapping("/api/course/common/recommended")
