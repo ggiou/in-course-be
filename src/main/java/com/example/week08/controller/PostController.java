@@ -52,7 +52,7 @@ public class PostController {
 
     // 코스(게시글) 전체 조회
     @GetMapping("/api/course")
-    public List<PostResponseGetDto> getAllPosts() {
+    public List<PostResponseDetailDto> getAllPosts() {
         return postService.getAllPost();
     }
 
