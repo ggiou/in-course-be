@@ -5,9 +5,9 @@ name: logging-system
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "main" ]
     
 env:
   S3_BUCKET_NAME: dh-github-actions-s3-bucket
