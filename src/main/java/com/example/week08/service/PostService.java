@@ -5,7 +5,6 @@ import com.example.week08.domain.OpenWeatherData;
 import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.*;
-import com.example.week08.dto.response.PostResponseDetailDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.errorhandler.BusinessException;
@@ -61,20 +60,19 @@ public class PostService {
 
     // 코스(게시글) 단건 조회
     @Transactional
-    public PostResponseDetailDto getPost(Long courseId) {
+    public PostResponseDto getPost(Long courseId) {
         Post post = postRepository.findByJoinPlace(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-
-
-        return new PostResponseDetailDto(post);
+        return new PostResponseDto(post);
     }
 
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public List<PostResponseDetailDto> getAllPost() {
-        return postRepository.findAllByOrderByModifiedAtDesc().stream()
-                .map(PostResponseDetailDto::new)
+    public List<PostResponseDto> getAllPost() {
+        return postRepository.findAllByOrderByModifiedAtDesc()
+                .stream()
+                .map(PostResponseDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -89,7 +87,7 @@ public class PostService {
 
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
-                .map(p -> new PostResponseDto((Post) p))
+                .map(PostResponseDto::new)
                 .collect(Collectors.toList());
     }
 
