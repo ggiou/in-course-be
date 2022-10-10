@@ -177,38 +177,36 @@ public class PostService {
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
     @Transactional(readOnly = true)
-    public List<PostResponseGetDto> getRecommended(Member member) {
+    public Optional<PostResponseGetDto> getRecommended(Member member) {
 
         Optional<OpenWeatherData> openWeatherData = openWeatherDataRepository.findByMember(member);
         Map<String, Object> searchKeys = new HashMap<>();
         searchKeys.put("newPost", true); //새로운 게시물
         //지역이 'Wonju' 처럼 들어오면 '강원'으로 바꿔서 해시맵에 넣어준다
-        if (openWeatherData.get().getRegion() != null) searchKeys.put("region", openWeatherData.get().getRegion());//지역
-
-
-//        if (openWeatherData.get().getWeather() != null) searchKeys.put("weather", openWeatherData.get().getWeather());//날씨
-//        if (openWeatherData.get().getRegion() != null) searchKeys.put("region", openWeatherData.get().getRegion());//지역
+        if (openWeatherData.get().getWeather() != null) searchKeys.put("weather", openWeatherData.get().getWeather());//날씨
+        if (openWeatherData.get().getRegion() != null || regionChange(openWeatherData.get().getRegion()) != null)
+            searchKeys.put("region", regionChange(openWeatherData.get().getRegion()));//지역
         if (openWeatherData.get().getSeason() != null) searchKeys.put("season", openWeatherData.get().getSeason());//계절
-        System.out.println(searchKeys);
-        searchKeys.put("avgScore", topAvgScore());//평점
+
+        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingInt(PostResponseGetDto::getAvgScore);
 
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
                 .map(PostResponseGetDto::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.maxBy(scoreComparator));
     }
     //메인 비로그인 유저용 새로운게시물/ 평점기반
     @Transactional(readOnly = true)
-    public List<PostResponseGetDto> getCommonRecommended() {
+    public Optional<PostResponseGetDto> getCommonRecommended() {
 
         Map<String, Object> searchKeys = new HashMap<>();
         searchKeys.put("newPost", true); //새로운 게시물
-        searchKeys.put("avgScore", topAvgScore());//평점
 
+        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingInt(PostResponseGetDto::getAvgScore);
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
                 .map(PostResponseGetDto::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.maxBy(scoreComparator));
     }
 
     //평점 평균 최대값
@@ -223,7 +221,106 @@ public class PostService {
         }
 
         int top = avgPostList.stream().max(Integer::compare).orElse(-1);
-    return top;
+        return top;
     }
+
+
+    //들어온 지역값을 카테고리에 맞게 바꿔서 돌려보내준다
+    @Transactional
+    public String regionChange(String region){
+
+        String[] capital = {"Seoul","Seŏul","Incheon","Incheŏn","Suwon","Suwŏn","Yongin","Yŏngin","Seongnam","Seŏngnam",
+                "Bucheon","Bucheŏn","Hwaseong","Hwaseŏng","Ansan","Anyang","Pyeongtaek","Pyeŏngtaek","Siheung","Gimpo",
+                "Gimpŏ","Gwangju","Gwangmyeong","Gwangmyeŏng","Gunpo","Gunpŏ","Hanam","Osan","Ŏsan","Icheon","Icheŏn",
+                "Anseong","Anseŏng","Uiwang","Yangpyeong","Yangpyeŏng","Yeoju","Yeŏju","Gwacheon","Gwacheŏn","Goyang","Gŏyang",
+                "Namyangju","Paju","Uijeongbu","Uijeŏngbu","Yangju","Guri","Pocheon","Pŏcheon","Dongducheon","Dŏngducheŏn",
+                "Gapyeong","Gapyeŏng","Yeoncheon","Yeŏncheŏn"};
+
+        String[] gangwon = {"Chuncheon","Chuncheŏn","Wonju","Wŏnju","Gangneung","Donghae","Dŏnghae","Taebaek","Sokcho","Sŏkchŏ",
+                "Samcheok","Samcheŏk","Hongcheon","Hŏngcheŏn","Hoengseong","Hŏengseŏng","Yeongwol","Yeŏngwŏl","Pyeongchang",
+                "Pyeŏngchang","Jeongseon","Jeŏngseŏn","Cheorwon","Cheŏrwŏn","Hwacheon","Hwacheŏn","Yanggu","Inje","Goseong",
+                "Gŏseŏng","Yangyang","Okcheon","Ŏkcheŏn"};
+
+        String[] chungbuk = {"Cheongju","Cheŏngju","Chungju","Jecheon","Jecheŏn","Boeun","Bŏeun","Okcheon","Ŏkcheŏn",
+                "Yeongdong","Yeŏngdŏng","Jeungpyeong","Jeungpyeŏng","Jincheon","Jincheŏn","Goesan","Gŏesan","Eumseong",
+                "Eumseŏng","Danyang"};
+
+        String[] chungnam = {"Daejeon","Daejeŏn","Sejong","Sejŏng","Cheonan","Cheŏnan","Gyeongsan","Gyeŏngsan","Gongju",
+                "Gŏngju","Boryeong","Bŏryeong","Asan","Seosan","Seŏsan","Nonsan","Nŏnsan","Gyeryong","Gyeryŏng","Dangjin",
+                "Geumsan","Buyeo","Buyeŏ","Seocheon","Seŏcheon","Cheongyang","Cheŏngyang","Hongseong","Hŏngseŏng","Yesan",
+                "Taean"};
+
+        String[] jeonbuk = {"Jeonju","Jeŏnju","Gunsan","Iksan","Jeongeup","Jeŏngeup","Namwon","Namwŏn","Gimje","Wanju",
+                "Jinan","Muju","Jangsu","Imsil","Sunchang","Gochang","Gŏchang","Buan"};
+
+        String[] jeonnam = {"Gwangju","Mokpo","Mŏkpŏ","Yeosu","Yeŏsu","Suncheon","Suncheŏn","Naju","Gwangyang","Damyang",
+                "Gokseong","Gŏkseŏng","Gurye","Goheung","Gŏheung","Gurye","Boseong","Bŏseŏng","Hwasun","Jangheung",
+                "Gangjin","Haenam","Yeongam","Yeŏngam","Muan","Hampyeong","Hampyeŏng","Yeonggwang","Yeŏnggwang",
+                "Jangseong","Jangseŏng","Wando","Wandŏ","Jindo","Jindŏ","Shinan"};
+
+        String[] gyeongbuk = {"Daegu","Pohang","Pŏhang","Gyeongju","Gyeŏngju","Gimcheon","Gimcheŏn","Andong","Andŏng",
+                "Gumi","Yeongju","Yeŏngju","Yeongcheon","Yeŏngcheŏn","Sangju","Mungyeong","Mungyeŏng","Gyeongsan","Gyeŏngsan",
+                "Gunwi","Uiseong","Uiseŏng","Cheongsong","Cheŏngsŏng","Yeongyang","Yeŏngyang","Yeongdeok","Yeŏngdeŏk",
+                "Cheongdo","Cheŏngdŏ","Goryeong","Gŏryeŏng","Seongju","Seŏngju","Chilgok","Chilgŏk","Yecheon","Yecheŏn",
+                "Bonghwa","Bŏnghwa","Uljin","Ulleung"};
+
+        String[] gyeongnam = {"Busan","Ulsan","Changwon","Changwŏn","Gimhae","Yangsan","Jinju","Geoje","Geŏje","Tongyeong",
+                "Tŏngyeŏng","Sacheon","Sacheŏn","Miryang","Haman","Changnyeong","Changnyeŏng","Geochang","Geŏchang",
+                "Goseong","Gŏseong","Hadong","Hadŏng","Hapcheon","Hapcheŏn","Namhae","Hamyang","Sancheong","Sancheŏng",
+                "Uiryeong","Uiryeŏng"};
+
+        String[] jeju = {"Jeju","Seogwipo","Seŏgwipŏ"};
+
+        String answer = null;
+        for (int i = 0; i < capital.length; i++) {
+            if (capital[i].equals(region)){
+                answer = "수도권";
+            }
+        }
+        for (int i = 0; i < gangwon.length; i++) {
+            if (gangwon[i].equals(region)){
+                answer = "강원";
+            }
+        }
+        for (int i = 0; i < chungbuk.length; i++) {
+            if (chungbuk[i].equals(region)){
+                answer = "충북";
+            }
+        }
+        for (int i = 0; i < chungnam.length; i++) {
+            if (chungnam[i].equals(region)){
+                answer = "충남";
+            }
+        }
+        for (int i = 0; i < jeonbuk.length; i++) {
+            if (jeonbuk[i].equals(region)){
+                answer = "전북";
+            }
+        }
+        for (int i = 0; i < jeonnam.length; i++) {
+            if (jeonnam[i].equals(region)){
+                answer = "전남";
+            }
+        }
+        for (int i = 0; i < gyeongbuk.length; i++) {
+            if (gyeongbuk[i].equals(region)){
+                answer = "경북";
+            }
+        }
+        for (int i = 0; i < gyeongnam.length; i++) {
+            if (gyeongnam[i].equals(region)){
+                answer = "경남";
+            }
+        }
+        for (int i = 0; i < jeju.length; i++) {
+            if (jeju[i].equals(region)){
+                answer = "제주";
+            }
+        }
+        return answer;
+
+    }
+
+
 
 }
