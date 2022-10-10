@@ -205,22 +205,6 @@ public class PostService {
                 .collect(Collectors.maxBy(scoreComparator));
     }
 
-    //평점 평균 최대값
-    @Transactional
-    public int topAvgScore(){
-        //리스트가 아니라 가장 높은 avgScore값을 가져와야함
-        List<Post> post = postRepository.findAll();
-        List<Integer> avgPostList = new ArrayList<>();
-        for (int i = 0; i < post.size(); i++){
-        int avgScores = post.get(i).getAvgScore();
-            avgPostList.add(i, avgScores);
-        }
-
-        int top = avgPostList.stream().max(Integer::compare).orElse(-1);
-        return top;
-    }
-
-
     //들어온 지역값을 카테고리에 맞게 바꿔서 돌려보내준다
     @Transactional
     public String regionChange(String region){
