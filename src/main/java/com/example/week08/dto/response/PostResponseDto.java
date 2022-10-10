@@ -1,6 +1,5 @@
 package com.example.week08.dto.response;
 
-import com.example.week08.domain.Member;
 import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import lombok.AllArgsConstructor;
