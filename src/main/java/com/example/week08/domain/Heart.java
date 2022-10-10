@@ -20,6 +20,10 @@ public class Heart {
     private Long postId;
 
     @Column(nullable = false)
-    private String nickname;
+    private String email;
+
+    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;  //어떤 사용자가 좋아요~(내 관심 상품 목록 활용)
 
 }
