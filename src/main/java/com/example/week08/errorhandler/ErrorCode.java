@@ -23,6 +23,11 @@ public enum ErrorCode {
     DUPLICATED_USER_NICKNAME(400, "M004", "Nickname input is duprication(이미 존재하는 닉네임 입니다.)"),
     PASSWORDS_NOT_MATCHED(400, "M005", "Password and PasswordConfirm do not match. (비밀번호와 비밀번호 확인이 일치하지 않습니다.)"),
 
+    //Heart
+    FAIL_HEART (400, "H001", "Heart is duprication (이미 관심항목에 추가된 게시글 입니다.)"),
+    FAIL_DISHEART (400, "H002", "Heart is Empty (해당 관심 항목이 존재하지 않습니다.)"),
+
+
     //JWT
     JWT_NOT_PERMIT(400, "J001", "JWT is NOT PERMIT(존재하지 않는 Token 입니다.)"),
     JWT_INVALID_TOKEN(401, "J002", "TOKEN IS INVALID(토큰이 유효하지 않습니다.)"),

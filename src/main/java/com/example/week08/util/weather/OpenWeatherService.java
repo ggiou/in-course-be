@@ -44,8 +44,7 @@ public class OpenWeatherService {
         if (null == member) {
             throw new BusinessException("회원만 사용가능한 서비스 입니다.",ErrorCode.JWT_NOT_PERMIT);
         }
-
-        String url = "https://api.openweathermap.org/data/2.5/weather?"//단기 예보 조회
+                String url = "https://api.openweathermap.org/data/2.5/weather?"//단기 예보 조회
                 + "lat=" + requestDto.getY()//예보지점 y 좌표
                 + "&lon=" + requestDto.getX()//예보지점 x 좌표
                 + "&appid=" + (appids)//인증키
