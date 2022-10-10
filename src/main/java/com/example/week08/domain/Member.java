@@ -1,20 +1,15 @@
 package com.example.week08.domain;
 
 
-import com.example.week08.dto.request.ProfileRequestDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.persistence.*;
 import java.util.Objects;
+import javax.validation.constraints.NotNull;
 
-import lombok.*;
-
-import javax.persistence.*;
 @Builder
 @Getter
 @Setter
@@ -26,29 +21,21 @@ public class Member extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
+    @NotNull
     private String email;
-
     @Column
     private String nickname;
-
-    @Column(nullable = false)
+    @NotNull
     private String password;
-
     @Column
     private String profileImage;
-
     @Column
     private String location;
-
     @Column(unique = true)
     private Long kakaoId;
-
     @Column(unique = true)
     private String naverId;
-
-    @Column(nullable = false)
+    @NotNull
     private int emailAuth;
 
 
