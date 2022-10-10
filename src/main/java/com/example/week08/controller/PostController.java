@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -71,13 +72,13 @@ public class PostController {
 
     //메인 날씨/지역/계절/평점 기반 추천 회원용
     @GetMapping("/api/course/member/recommended")
-    public List<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public Optional<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.getRecommended(userDetails.getMember());
     }
 
     //메인 평점 기반 추천 비회원용
     @GetMapping("/api/course/common/recommended")
-    public List<PostResponseGetDto> commonRecommendedGet(){
+    public Optional<PostResponseGetDto>  commonRecommendedGet(){
         return postService.getCommonRecommended();
     }
 
