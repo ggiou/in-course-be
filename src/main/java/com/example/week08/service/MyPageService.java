@@ -45,6 +45,7 @@ public class MyPageService {
         return new ProfileResponseDto(member);
     } //회원(내) 프로필 정보 보기
 
+    @Transactional
     public MyPostListResponseDto getPost(HttpServletRequest request) throws BusinessException {
         Member member = validateMember(request);
         if (null == member) {
@@ -54,6 +55,7 @@ public class MyPageService {
         return new MyPostListResponseDto(myPostList);
     } //회원(내) 작성한 글 전체 보기
 
+    @Transactional
     public MyHeartListDto getHeart(HttpServletRequest request) throws BusinessException {
         Member member = validateMember(request);
         if (null == member) {

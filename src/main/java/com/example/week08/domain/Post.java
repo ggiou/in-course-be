@@ -34,17 +34,9 @@ public class Post extends Timestamped {
     private String image;
 
    @JoinColumn(name = "Member_id", nullable = false)
-   @ManyToOne(fetch = FetchType.LAZY)
+   @ManyToOne(fetch = FetchType.EAGER)
    private Member member;
 
-
-//    @Column(nullable = false)
-//    private String category;
-//
-//    @Column(nullable = false)
-//    private String tag;
-
-//    @JoinColumn(name = "member_id", nullable = false)
     private String weather;
     @Getter
     public enum Weather {
@@ -128,21 +120,6 @@ public class Post extends Timestamped {
     @ColumnDefault("0")
     @Min(0)
     private int heart;
-
-//    @JoinColumn(name = "member_id", nullable = false)
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private Member member;
-
-//    // 회원정보 검증
-//    public boolean validateMember(Member member) {
-//        return !this.member.equals(member);
-//    }
-
-    // 찜하기 상태 동기화
-    public void syncHeart(int num) {
-        this.heart = (num);
-    }
-
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL
 //            , orphanRemoval = true

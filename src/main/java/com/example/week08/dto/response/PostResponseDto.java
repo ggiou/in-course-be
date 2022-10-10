@@ -26,8 +26,13 @@ public class PostResponseDto {
     private String who;
     private int avgScore;
     private int heart;
-//    private String courseMap;
-    private Member member;
+    private Long memberId;
+    private String email;
+    private String nickname;
+    private String profileImage;
+    private String location;
+    private Long kakaoId;
+    private String naverId;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<Place> place;
@@ -44,7 +49,13 @@ public class PostResponseDto {
         this.avgScore = post.getAvgScore();
         this.heart = post.getHeart();
         this.place = post.getPlace();
-        this.member = post.getMember();
+        this.memberId = post.getMember().getId();
+        this.email = post.getMember().getEmail();
+        this.nickname = post.getMember().getNickname();
+        this.profileImage = post.getMember().getProfileImage();
+        this.location = post.getMember().getLocation();
+        this.kakaoId = post.getMember().getKakaoId();
+        this.naverId = post.getMember().getNaverId();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
     }
