@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class MyPostListResponseDto {
 
     private final List<PostResponseDto> myPostList = new ArrayList<>();
