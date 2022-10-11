@@ -3,9 +3,11 @@ package com.example.week08.service;
 import com.example.week08.domain.Heart;
 import com.example.week08.domain.Member;
 import com.example.week08.domain.Post;
+import com.example.week08.dto.request.NaverMemberInfoDto;
 import com.example.week08.dto.request.ProfileRequestDto;
 import com.example.week08.dto.response.MyHeartListDto;
 import com.example.week08.dto.response.MyPostListResponseDto;
+import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.ProfileResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
@@ -15,6 +17,7 @@ import com.example.week08.repository.MemberRepository;
 import com.example.week08.repository.PostRepository;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +55,7 @@ public class MyPageService {
             throw new BusinessException(member.getNickname() + "의 작성한 글을 볼 권한이 없습니다.", ErrorCode.JWT_INVALID_TOKEN);
         }
         List<Post> myPostList = postRepository.findAllByMember(member);
+
         return new MyPostListResponseDto(myPostList);
     } //회원(내) 작성한 글 전체 보기
 
