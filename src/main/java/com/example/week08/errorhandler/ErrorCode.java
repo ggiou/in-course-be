@@ -52,11 +52,17 @@ public enum ErrorCode {
     //COMMENT
     COMMENT_NOT_EXIST(400, "C001", "COMMENT_NOT_EXIST"),
     MEMBER_NOT_EQUALS(400, "C002", "MEMBER_NOT_EQUALS"),
+
     //SUB COMMENT
     SUBCOMMENT_NOT_EXIST(400, "C001", "SUBCOMMENT_NOT_EXIST"),
+
     //MAIL
     NUMBER_NOT_PERMIT(400, "M010", "NUMBER_NOT_PERMIT"),
     EMAIL_NOT_EXIST(400, "M011", "EMAIL_NOT_EXIST"),
+
+    //HEART
+    ALREADY_HEARTED(409, "H001", "ALREADY_HEARTED"),
+    HEART_NOT_FOUND(404, "H002", "HEART_NOT_FOUND")
             ;
     private final String code;
     private final String message;
