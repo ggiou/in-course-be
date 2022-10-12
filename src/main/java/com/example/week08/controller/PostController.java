@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +28,8 @@ public class PostController {
 
 // 코스 게시글 작성(카드 이미지 통합)
     @PostMapping( "/api/course")
-    public Post createPost(@RequestPart(value = "data") PostPlaceDto requestDto,
-                           @RequestPart(value = "image" ,required = false) List<MultipartFile> image,
+    public Post createPost(@RequestPart(value = "data") @Valid PostPlaceDto requestDto,
+                           @RequestPart(value = "image" ,required = false) @Valid List<MultipartFile> image,
                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return postService.postCreate(requestDto, image, userDetails.getMember());
     }
@@ -48,8 +49,8 @@ public class PostController {
     // 코스(게시글) 수정
     @PutMapping( "/api/course/{courseId}")
     public Post updatePost(@PathVariable Long courseId,
-                           @RequestPart(value = "data") PostPlacePutDto requestDto,
-                           @RequestPart(value = "image" ,required = false) List<MultipartFile> image,
+                           @RequestPart(value = "data") @Valid PostPlacePutDto requestDto,
+                           @RequestPart(value = "image" ,required = false) @Valid List<MultipartFile> image,
                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return postService.postUpdate(courseId, requestDto, image, userDetails.getMember());
     }
@@ -57,7 +58,7 @@ public class PostController {
     // 코스(게시글) 삭제
     @DeleteMapping( "/api/course/{courseId}")
     public ResponseEntity<String> deletePost(@PathVariable Long courseId,
-                                             @RequestPart(value = "data") PlaceDeleteDto requestDto,
+                                             @RequestPart(value = "data") @Valid PlaceDeleteDto requestDto,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         postService.postDelete(courseId, requestDto, userDetails.getMember());
         return ResponseEntity.ok("게시물 삭제 성공");
@@ -65,8 +66,7 @@ public class PostController {
 
     // 코스(게시글) 카테고리 조회
     @GetMapping("/api/course/category")
-    public List<PostResponseDto> findAll(@RequestBody(required = false) PostRequestDto requestDto){
-//        if (requestDto == null) return postService.findAll();
+    public List<PostResponseDto> findAll(@RequestBody(required = false) @Valid PostRequestDto requestDto){
         return postService.findPost(requestDto);
     }
 

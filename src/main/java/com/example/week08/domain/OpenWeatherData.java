@@ -3,6 +3,7 @@ package com.example.week08.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter
@@ -19,33 +20,24 @@ public class OpenWeatherData extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @Column(nullable = false)
+    @NotNull
     private String region;
-
-    @Column(nullable = false)
+    @NotNull
     private String weather; //날씨(맑음, 흐림, 눈, 비)
-
-    @Column(nullable = false)
+    @NotNull
     private String season; //계절
-
-    @Column(nullable = false)
+    @NotNull
     private String description; //날씨 설명
-
-    @Column(nullable = false)
+    @NotNull
     private double temp ; //온도
-
-    @Column(nullable = false)
+    @NotNull
     private int humidity ; //습도
-
-    @Column(nullable = false)
+    @NotNull
     private double wind_speed ; //풍속
-
-    @Column(nullable = false)
+    @NotNull
     private int clouds; //흐림 정도(%)
-
     @Column
     private int rain_h; //1시간 동안 강우량
-
     @Column
     private int snow_h; //1시간 동안 강우량
 

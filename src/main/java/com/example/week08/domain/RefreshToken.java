@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
@@ -21,6 +22,6 @@ public class RefreshToken extends Timestamped{
     @OneToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @Column(nullable = false)
+    @NotNull
     private String keyValue;
 }

@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @Setter
@@ -21,34 +22,21 @@ public class Place extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
+    @NotNull
     private String content;
-
-    @Column(nullable = false)
+    @NotNull
     private String address;//주소
-
-    @Column(nullable = false)
+    @NotNull
     private String coordinateX;//좌표 x
-
-    @Column(nullable = false)
+    @NotNull
     private String coordinateY;//좌표 y
-
     @Column
     private String placeImage;//이미지 url사용할거
-    @Column
-    private String placeName;
-
+    @NotNull
+    private String placeName;//장소명
     @ColumnDefault("0")
     @Min(0)
     private int heart_place;
-
-//    @Column(nullable = false)
-//    private Long Course_id;
-
-//    @ManyToOne
-//    @JoinColumn(name = "Member_id", nullable = false)
-//    private Member member;
 
     @JoinColumn(name = "Course_id")
     @ManyToOne(fetch = FetchType.LAZY)

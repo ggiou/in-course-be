@@ -9,7 +9,8 @@ import com.example.week08.dto.request.ScoreRequestDto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.hibernate.annotations.ColumnDefault;
 import javax.validation.constraints.Min;
-import java.util.ArrayList;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Builder
@@ -24,20 +25,34 @@ public class Post extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String title;
-
-    @Column(nullable = false)
+    @NotNull
     private String content;
-
-    @Column(nullable = false, length = 500)
+    @NotNull
+    @Size(min = 2, max = 500)
     private String image;
-
-   @JoinColumn(name = "Member_id", nullable = false)
-   @ManyToOne(fetch = FetchType.EAGER)
-   private Member member;
-
+    @NotNull
+    private String region;
+    @NotNull
     private String weather;
+    @NotNull
+    private String season;
+    @NotNull
+    private String who;
+    @ColumnDefault("0")
+    private int num;
+    @ColumnDefault("0")
+    private int score;
+    @ColumnDefault("0")
+    private int avgScore;
+    @Column
+    private boolean newPost = true;
+    @ColumnDefault("0")
+    @Min(0)
+    private int heart;
+
+
     @Getter
     public enum Weather {
         SUNNY("맑음"), CLOUDY("흐림"), SNOW("눈"), RAINY("비");
@@ -52,8 +67,6 @@ public class Post extends Timestamped {
         }
     }
 
-    @Column(nullable = false)
-    private String region;
     @Getter
     public enum Region {
         CAPITAL("수도권"), GANGWON("강원"), CHUNGBUK("충북"), CHUNGNAM("충남"), JEONBUK("전북"), JEONNAM("전남"), GYEONGBUK("경북"), GYEONGNAM("경남"), JEJU("제주");
@@ -64,8 +77,6 @@ public class Post extends Timestamped {
         }
     }
 
-    @Column(nullable = false)
-    private String season;
     @Getter
     public enum Season {
         SPRING("봄"), SUMMER("여름"), AUTUMN("가을"), WINTER("겨울");
@@ -76,8 +87,6 @@ public class Post extends Timestamped {
         }
     }
 
-    @Column(nullable = false)
-    private String who;
     @Getter
     public enum Who {
         SOLO("혼자"), FAMILY("가족"), FRIEND("친구"), COUPLE("연인"), COLLEAGUE("동료");
@@ -88,42 +97,11 @@ public class Post extends Timestamped {
         }
     }
 
-    @ColumnDefault("0")
-    private int num;
+    @JoinColumn(name = "Member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Member member;
 
-    @ColumnDefault("0")
-    private int score;
-
-    @ColumnDefault("0")
-    private int avgScore;
-
-    @Column
-    private boolean newPost = true;
-
-    //    @Column
-//    private int avgScore;
-//
-//    @Getter
-//    public enum Point {
-//        Bad("20점"), NORMAL("40점"), GOOD("60점"), VERYGOOD("80점"), EXCELLENT("100점");
-//        public final String point;
-//
-//        Point(String point) {
-//            this.point = point;
-//        }
-//        @JsonCreator
-//        public static EventType from(String s) {
-//            return EventType.valueOf(s.toUpperCase());
-//        }
-//    }
-
-    @ColumnDefault("0")
-    @Min(0)
-    private int heart;
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL
-//            , orphanRemoval = true
-    )
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "Course_Id")
     private List<Place> place;
 
@@ -149,6 +127,10 @@ public class Post extends Timestamped {
         this.who = postRequestDto.getWho();
         this.image = image;
         this.member = member;
+    }
+    // 찜하기 상태 동기화
+    public void syncHeart(int num) {
+        this.heart = (num);
     }
     public void updatePostByNewPost(boolean newPost) {
         this.newPost = newPost;
