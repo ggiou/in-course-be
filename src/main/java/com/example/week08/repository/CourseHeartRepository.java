@@ -12,9 +12,6 @@ public interface CourseHeartRepository extends JpaRepository<CourseHeart, Long> 
 
     Optional<CourseHeart> findByPostAndMember(Post post, Member member);
 
-    List<CourseHeart> findPostIdByMemberEmail(String Email);
-
-    List<CourseHeart> findAllByMember(Member member);
-
+    List<CourseHeart> findAllByMemberEmail(String email);
 
 }

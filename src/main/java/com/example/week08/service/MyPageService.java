@@ -1,33 +1,25 @@
 package com.example.week08.service;
 
-import com.example.week08.domain.Heart;
 import com.example.week08.domain.Member;
-import com.example.week08.domain.Post;
-import com.example.week08.dto.request.NaverMemberInfoDto;
 import com.example.week08.dto.request.ProfileRequestDto;
-import com.example.week08.dto.response.MyHeartListDto;
-import com.example.week08.dto.response.MyPostListResponseDto;
-import com.example.week08.dto.response.PostResponseDto;
-import com.example.week08.dto.response.ProfileResponseDto;
+import com.example.week08.dto.response.*;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.jwt.TokenProvider;
-import com.example.week08.repository.HeartRepository;
-import com.example.week08.repository.MemberRepository;
-import com.example.week08.repository.PostRepository;
+import com.example.week08.repository.*;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -35,7 +27,7 @@ public class MyPageService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
-    private final HeartRepository heartRepository;
+    private final CourseHeartRepository courseHeartRepository;
     private final PostRepository postRepository;
 
     private final S3Uploader s3Uploader;
@@ -48,33 +40,35 @@ public class MyPageService {
         return new ProfileResponseDto(member);
     } //회원(내) 프로필 정보 보기
 
-    @Transactional
-    public MyPostListResponseDto getPost(HttpServletRequest request) throws BusinessException {
-        Member member = validateMember(request);
-        if (null == member) {
-            throw new BusinessException(member.getNickname() + "의 작성한 글을 볼 권한이 없습니다.", ErrorCode.JWT_INVALID_TOKEN);
-        }
-        List<Post> myPostList = postRepository.findAllByMember(member);
 
-        return new MyPostListResponseDto(myPostList);
-    } //회원(내) 작성한 글 전체 보기
-
+    // 회원(내) 작성한 글 전체 보기
     @Transactional
-    public MyHeartListDto getHeart(HttpServletRequest request) throws BusinessException {
+    public  List<PostResponseDto> getPost(HttpServletRequest request) throws BusinessException {
         Member member = validateMember(request);
         if (null == member) {
             throw new BusinessException(member.getNickname() + "의 찜한 코스를 볼 권한이 없습니다.", ErrorCode.JWT_INVALID_TOKEN);
         }
-        List<Heart> hearts = heartRepository.findByEmail(member.getEmail());
-        List<Optional<Post>> heartList = new ArrayList<>();
 
-        for (Heart heart : hearts) {
-            heartList.add(postRepository.findById(heart.getPostId()));
+        return postRepository.findAllByMemberEmail(member.getEmail())
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+
+    // 마이페이지 내가 찜한 코스 조회
+    @Transactional
+    public  List<CourseHeartResponseDto> getHeart(HttpServletRequest request) throws BusinessException {
+        Member member = validateMember(request);
+        if (null == member) {
+            throw new BusinessException(member.getNickname() + "의 찜한 코스를 볼 권한이 없습니다.", ErrorCode.JWT_INVALID_TOKEN);
         }
 
-        return new MyHeartListDto(heartList);
-
-    } //회원(내) 찜한 코스 전체 보기
+        return courseHeartRepository.findAllByMemberEmail(member.getEmail())
+                .stream()
+                .map(CourseHeartResponseDto::new)
+                .collect(Collectors.toList());
+    }
 
     private Member validateMember(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
