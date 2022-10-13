@@ -1,6 +1,7 @@
 package com.example.week08.controller;
 
 import com.example.week08.domain.UserDetailsImpl;
+import com.example.week08.dto.response.CourseHeartResponseDto;
 import com.example.week08.service.HeartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,39 +12,40 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Validated
 @RequiredArgsConstructor
 @RestController
 public class HeartController {
     private final HeartService heartService;
 
-    // 코스(게시글) 찜하기
+    //코스(게시글) 찜하기
     @PostMapping( "/api/course/heart/{courseId}")
-    public ResponseEntity<String> addPostHeart(@PathVariable Long courseId, HttpServletRequest request) {
-        heartService.addPostHeart(courseId, request);
-        return new ResponseEntity<>("찜하기 성공", HttpStatus.OK);
+    public CourseHeartResponseDto addPostHeart(@PathVariable Long courseId,
+                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return heartService.addPostHeart(courseId, userDetails.getMember());
     }
 
     // 코스(게시글) 찜하기 취소
     @PostMapping( "/api/course/disheart/{courseId}")
-    public ResponseEntity<String> deletePostHeart(@PathVariable Long courseId, HttpServletRequest request) {
-        heartService.deletePostHeart(courseId, request);
+    public ResponseEntity<String> deletePostHeart(@PathVariable Long courseId,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        heartService.deletePostHeart(courseId, userDetails.getMember());
         return new ResponseEntity<>("찜하기 취소 성공", HttpStatus.OK);
     }
 
     // 장소(카드) 찜하기
     @PostMapping( "/api/course/place/heart/{placeId}")
-    public ResponseEntity<String> addPlaceHeart(@PathVariable Long placeId) {
-        heartService.addPlaceHeart(placeId);
+    public ResponseEntity<String> addPlaceHeart(@PathVariable Long placeId,
+                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        heartService.addPlaceHeart(placeId, userDetails.getMember());
         return new ResponseEntity<>("찜하기 성공", HttpStatus.OK);
     }
 
     // 장소(카드) 찜하기 취소
     @PostMapping( "/api/course/place/disheart/{placeId}")
-    public ResponseEntity<String> deletePlaceHeart(@PathVariable Long placeId) {
-        heartService.deletePlaceHeart(placeId);
+    public ResponseEntity<String> deletePlaceHeart(@PathVariable Long placeId,
+                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        heartService.deletePlaceHeart(placeId, userDetails.getMember());
         return new ResponseEntity<>("찜하기 취소 성공", HttpStatus.OK);
     }
 }

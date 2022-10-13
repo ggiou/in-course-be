@@ -1,15 +1,11 @@
 package com.example.week08.service;
 
-import com.example.week08.domain.Heart;
-import com.example.week08.domain.Member;
-import com.example.week08.domain.Place;
-import com.example.week08.domain.Post;
+import com.example.week08.domain.*;
+import com.example.week08.dto.response.CourseHeartResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.jwt.TokenProvider;
-import com.example.week08.repository.HeartRepository;
-import com.example.week08.repository.PlaceRepository;
-import com.example.week08.repository.PostRepository;
+import com.example.week08.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,87 +20,83 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class HeartService {
 
-    private final HeartRepository heartRepository;
+    private final CourseHeartRepository courseHeartRepository;
+    private final PlaceHeartRepository placeHeartRepository;
     private final PostRepository postRepository;
     private final PlaceRepository placeRepository;
-    private final TokenProvider tokenProvider;
 
     // 코스(게시글) 찜하기
     @Transactional
-    public void addPostHeart(Long courseId, HttpServletRequest request) {
-        Member member = validateMember(request); //현재 로그인 중인 멤버
+    public CourseHeartResponseDto addPostHeart(Long courseId, Member member) {
         Post post = postRepository.findById(courseId).orElseThrow(
-                () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
+                () -> new BusinessException("존재하지 않는 course id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-        List<Heart> temp = heartRepository.findAllByPostId(courseId);
 
-        if (!temp.isEmpty()) {
-            for (Heart heart : temp) {
-                boolean likeEquals = Objects.equals(heart.getMember().getEmail(), member.getEmail());
-                if (likeEquals) {
-                    throw new BusinessException(ErrorCode.FAIL_HEART);
-                }
-            }
-        } //중복 like 배제
+        if (courseHeartRepository.findByPostAndMember(post, member).isPresent()) {
+            throw new BusinessException("이미 찜한 course 입니다.", ErrorCode.ALREADY_HEARTED);
+        }
+
+        courseHeartRepository.save(new CourseHeart(post, member));
+
         post.addHeart();
         postRepository.save(post);
 
-        Heart heart = Heart.builder()
-                .postId(courseId)
-                .email(member.getEmail())
-                .member(member)
-                .build();
-        heartRepository.save(heart);
+        return new CourseHeartResponseDto(post, member);
+
     }
 
-    @Transactional
     // 코스(게시글) 찜하기 취소
-    public void deletePostHeart(Long courseId, HttpServletRequest request) {
-        Member member = validateMember(request); //현재 로그인 중인 멤버
+    @Transactional
+    public void deletePostHeart(Long courseId, Member member) {
         Post post = postRepository.findById(courseId).orElseThrow(
-                () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
+                () -> new BusinessException("존재하지 않는 course id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-        Optional<Heart> temp = heartRepository.findByEmailAndPostId(member.getEmail(), courseId);
-        if (temp.isEmpty()) {
-            throw new BusinessException(ErrorCode.FAIL_DISHEART);
+        Optional<CourseHeart> heartOptional = courseHeartRepository.findByPostAndMember(post, member);
+
+        if (heartOptional.isEmpty()) {
+            throw new BusinessException("찜하지 않은 course 입니다.", ErrorCode.HEART_NOT_FOUND);
         }
-        Heart heart = temp.get();
-        if(!Objects.equals(heart.getMember().getId(), member.getId())){
-            throw new BusinessException("해당 찜하기의 작성자가 아닙니다.",ErrorCode.FAIL_DISHEART);
-        }
-        if(!Objects.equals(heart.getPostId(), post.getId())){
-            throw new BusinessException("해당 게시글의 찜하기 항목이 아닙니다.", ErrorCode.FAIL_DISHEART);
-        } //해당 로그인 한 유저가 해당 게시글의 관심항목 작성자가 아닐 경우에는 예외처리 해줘야 함
+
+        courseHeartRepository.delete(heartOptional.get());
 
         post.deleteHeart();
         postRepository.save(post);
-        heartRepository.delete(heart);
     }
 
     // 장소(카드) 찜하기
     @Transactional
-    public void addPlaceHeart(Long placeId) {
-
+    public void addPlaceHeart(Long placeId, Member member) {
         Place place = placeRepository.findById(placeId).orElseThrow(
-                () -> new BusinessException("존재하지 않는 place id 입니다.", ErrorCode.POST_NOT_EXIST)
+                () -> new BusinessException("존재하지 않는 place id 입니다.", ErrorCode.PLACE_NOT_EXIST)
         );
+
+        if (placeHeartRepository.findHeartByPlaceIdAndMemberId(placeId, member.getId()).isPresent()) {
+            throw new BusinessException("이미 찜한 place 입니다.", ErrorCode.ALREADY_HEARTED);
+        }
+
+        PlaceHeart placeHeart = new PlaceHeart(placeId, member);
+        placeHeartRepository.save(placeHeart);
+
         place.addHeart();
         placeRepository.save(place);
     }
-    // 장소(카드) 찜하기 취소
-    public void deletePlaceHeart(Long placeId) {
 
+    // 장소(카드) 찜하기 취소
+    @Transactional
+    public void deletePlaceHeart(Long placeId, Member member) {
         Place place = placeRepository.findById(placeId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 place id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
+        Optional<PlaceHeart> heartOptional = placeHeartRepository.findHeartByPlaceIdAndMemberId(placeId, member.getId());
+
+        if (heartOptional.isEmpty()) {
+            throw new BusinessException("찜하지 않은 course 입니다.", ErrorCode.HEART_NOT_FOUND);
+        }
+
+        placeHeartRepository.delete(heartOptional.get());
+
         place.deleteHeart();
         placeRepository.save(place);
     }
-    @Transactional
-    public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-            return null;
-        }
-        return tokenProvider.getMemberFromAuthentication();
-    }
+
 }
