@@ -209,47 +209,38 @@ public class PostService {
     @Transactional
     public String regionChange(String region){
 
-        String[] capital = {"Seoul","Seŏul","Incheon","Incheŏn","Suwon","Suwŏn","Yongin","Yŏngin","Seongnam","Seŏngnam",
-                "Bucheon","Bucheŏn","Hwaseong","Hwaseŏng","Ansan","Anyang","Pyeongtaek","Pyeŏngtaek","Siheung","Gimpo",
-                "Gimpŏ","Gwangju","Gwangmyeong","Gwangmyeŏng","Gunpo","Gunpŏ","Hanam","Osan","Ŏsan","Icheon","Icheŏn",
-                "Anseong","Anseŏng","Uiwang","Yangpyeong","Yangpyeŏng","Yeoju","Yeŏju","Gwacheon","Gwacheŏn","Goyang","Gŏyang",
-                "Namyangju","Paju","Uijeongbu","Uijeŏngbu","Yangju","Guri","Pocheon","Pŏcheon","Dongducheon","Dŏngducheŏn",
-                "Gapyeong","Gapyeŏng","Yeoncheon","Yeŏncheŏn"};
-
-        String[] gangwon = {"Chuncheon","Chuncheŏn","Wonju","Wŏnju","Gangneung","Donghae","Dŏnghae","Taebaek","Sokcho","Sŏkchŏ",
-                "Samcheok","Samcheŏk","Hongcheon","Hŏngcheŏn","Hoengseong","Hŏengseŏng","Yeongwol","Yeŏngwŏl","Pyeongchang",
-                "Pyeŏngchang","Jeongseon","Jeŏngseŏn","Cheorwon","Cheŏrwŏn","Hwacheon","Hwacheŏn","Yanggu","Inje","Goseong",
-                "Gŏseŏng","Yangyang","Okcheon","Ŏkcheŏn"};
-
-        String[] chungbuk = {"Cheongju","Cheŏngju","Chungju","Jecheon","Jecheŏn","Boeun","Bŏeun","Okcheon","Ŏkcheŏn",
-                "Yeongdong","Yeŏngdŏng","Jeungpyeong","Jeungpyeŏng","Jincheon","Jincheŏn","Goesan","Gŏesan","Eumseong",
-                "Eumseŏng","Danyang"};
-
-        String[] chungnam = {"Daejeon","Daejeŏn","Sejong","Sejŏng","Cheonan","Cheŏnan","Gyeongsan","Gyeŏngsan","Gongju",
-                "Gŏngju","Boryeong","Bŏryeong","Asan","Seosan","Seŏsan","Nonsan","Nŏnsan","Gyeryong","Gyeryŏng","Dangjin",
-                "Geumsan","Buyeo","Buyeŏ","Seocheon","Seŏcheon","Cheongyang","Cheŏngyang","Hongseong","Hŏngseŏng","Yesan",
-                "Taean"};
-
-        String[] jeonbuk = {"Jeonju","Jeŏnju","Gunsan","Iksan","Jeongeup","Jeŏngeup","Namwon","Namwŏn","Gimje","Wanju",
-                "Jinan","Muju","Jangsu","Imsil","Sunchang","Gochang","Gŏchang","Buan"};
-
-        String[] jeonnam = {"Gwangju","Mokpo","Mŏkpŏ","Yeosu","Yeŏsu","Suncheon","Suncheŏn","Naju","Gwangyang","Damyang",
-                "Gokseong","Gŏkseŏng","Gurye","Goheung","Gŏheung","Gurye","Boseong","Bŏseŏng","Hwasun","Jangheung",
-                "Gangjin","Haenam","Yeongam","Yeŏngam","Muan","Hampyeong","Hampyeŏng","Yeonggwang","Yeŏnggwang",
-                "Jangseong","Jangseŏng","Wando","Wandŏ","Jindo","Jindŏ","Shinan"};
-
-        String[] gyeongbuk = {"Daegu","Pohang","Pŏhang","Gyeongju","Gyeŏngju","Gimcheon","Gimcheŏn","Andong","Andŏng",
-                "Gumi","Yeongju","Yeŏngju","Yeongcheon","Yeŏngcheŏn","Sangju","Mungyeong","Mungyeŏng","Gyeongsan","Gyeŏngsan",
-                "Gunwi","Uiseong","Uiseŏng","Cheongsong","Cheŏngsŏng","Yeongyang","Yeŏngyang","Yeongdeok","Yeŏngdeŏk",
-                "Cheongdo","Cheŏngdŏ","Goryeong","Gŏryeŏng","Seongju","Seŏngju","Chilgok","Chilgŏk","Yecheon","Yecheŏn",
-                "Bonghwa","Bŏnghwa","Uljin","Ulleung"};
-
-        String[] gyeongnam = {"Busan","Ulsan","Changwon","Changwŏn","Gimhae","Yangsan","Jinju","Geoje","Geŏje","Tongyeong",
-                "Tŏngyeŏng","Sacheon","Sacheŏn","Miryang","Haman","Changnyeong","Changnyeŏng","Geochang","Geŏchang",
-                "Goseong","Gŏseong","Hadong","Hadŏng","Hapcheon","Hapcheŏn","Namhae","Hamyang","Sancheong","Sancheŏng",
-                "Uiryeong","Uiryeŏng"};
-
-        String[] jeju = {"Jeju","Seogwipo","Seŏgwipŏ"};
+        //수도권
+        String[] capital = {"Yongin","Yeoncheon-gun","Yeoju","Yangp'yŏng","Yangju","Yach’on","Umulmok","Uijeongbu-si",
+                "Suwon","Republic of Korea","Seoul","Yongsan","Sinch’ŏn-dong","Sangok","Pyeongtaek","Pyeong","Bucheon-si",
+                "Osan","Namyang","Namp’o-ri","Munsan","Paju","Gyeonggi-do","Gwacheon","Guri-si","Gunpo","Goyang-si",
+                "Gimpo-si","Gapyeong","Ganghwa-gun","Incheon","Icheon-si","Hwaseong-si","Hwapyeongri","Kulgwan-dong",
+                "Jungpyong","Chuja-ri","Jamwon-dong","Anyang-si","Anseong","Ansan-si"};
+        //강원
+        String[] gangwon = {"Neietsu","Yangyang","Yanggu","Wŏnju","T’aebaek","Sokcho","Santyoku","Kosong","Goseong",
+                "Gangwon-do","Gangneung","Inje","Hwacheon","Hongch’ŏn","Chuncheon"};
+        //충북
+        String[] chungbuk = {"Yeongdong","Okcheon","Koesan","Ipyang-ni","Chungju","Chungcheongbuk-do","Cheongju-si",
+                "Chinch'ŏn","Teisen"};
+        //충남
+        String[] chungnam = {"Yesan","Tangjin","Taesal-li","Daejeon","Boryeong","Taian","Seosan","Seonghwan","Buyeo","Asan",
+                "Nonsan","Kinzan","Gongju","Hongseong","Chungcheongnam-do","Cheonan","Janggol"};
+        //전북
+        String[] jeonbuk = {"Wanju","Sunchang-chodeunghakgyo","Puan","Nangen","Muju","Gunsan","Koch'ang","Kimje","Iksan",
+                "Imsil","Jeonju","Jeollabuk-do","Jinan-gun","Changsu"};
+        //전남
+        String[] jeonnam = {"Tokusan-ri","Reisui","Yeonggwang","Yeongam-guncheong","Suncheon","Boseong","Beolgyo","Naju",
+                "Muan","Mokpo","Kwangyang","Gwangju","Kurye","Koyo","Hwasun","Hampyeongsaengtaegongwon","Haenam",
+                "Jeollanam-do"};
+        //경북
+        String[] gyeongbuk = {"Heunghae","Yeonil","Eisen","Yecheon","Waegwan","Unsal-li","Ulchin","Daegu","Jenzan",
+                "Sangju","Pohang","Mungyeong","Gyeongsangbuk-do","Gyeongsan-si","Gyeongju","Kuwaegwan","Kunwi","Gumi",
+                "Koryŏng","Gimcheon","Ipseokdong","Hŭngjŏn","Hayang","Cheongsong gun","Ch’ŏngnim","Shitsukoku","Changp’o",
+                "Andong"};
+        //경남
+        String[] gyeongnam = {"Yangsan","Ulsan","Seisan-ri","Songjeong","Sang-ni","Shisen","Busan","Namhae","Miryang",
+                "Masan","Kyosai","Kimhae","Gijang","Hamyang","Hadong-eup Samuso","Chinju","Chinhae","Changwon"};
+        //제주
+        String[] jeju = {"Jeju-do","Jeju City","Gaigeturi"};
 
         String answer = null;
         for (int i = 0; i < capital.length; i++) {
