@@ -7,7 +7,6 @@ import com.example.week08.dto.request.MemberDetailRequestDto;
 import com.example.week08.dto.request.MemberRequestDto;
 import com.example.week08.dto.response.MemberResponseDto;
 import com.example.week08.errorhandler.BusinessException;
-import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.jwt.TokenProvider;
 import com.example.week08.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

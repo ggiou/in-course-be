@@ -1,6 +1,7 @@
 package com.example.week08.service;
 
 import com.example.week08.domain.Member;
+import com.example.week08.domain.Post;
 import com.example.week08.dto.request.ProfileRequestDto;
 import com.example.week08.dto.response.*;
 import com.example.week08.errorhandler.BusinessException;
@@ -146,4 +147,28 @@ public class MyPageService {
         return new ProfileResponseDto(member);
     } //회원(내) 정보 수정하기
 
+    //좋아요 갯수에 따른 뱃지 지정
+    @Transactional
+    public String heartSumMember(Member member){
+        String badge;
+        List<Post> post = postRepository.findAllByMember(member);
+
+        int sumHeart = 0;
+        for (int i = 0; i < post.size(); i++){
+            sumHeart += post.get(i).getHeart();
+        }
+
+        if (sumHeart >= 0 && sumHeart < 100){
+            badge = "아싸";
+        }else if(sumHeart >= 100 && sumHeart < 500){
+            badge = "자발적 아싸";
+        }else if(sumHeart >= 500 && sumHeart < 1000){
+            badge = "흔남흔녀";
+        }else if(sumHeart >= 1000 && sumHeart < 5000){
+            badge = "인싸";
+        }else{
+            badge = "핵인싸";
+        }
+        return badge;
+    }
 }
