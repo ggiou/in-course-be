@@ -12,8 +12,11 @@ import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.*;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -67,13 +70,22 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
+//    // 코스(게시글) 전체 조회
+//    @Transactional(readOnly = true)
+//    public List<PostResponseDto> getAllPost() {
+//        return postRepository.findAllByOrderByModifiedAtDesc()
+//                .stream()
+//                .map(PostResponseDto::new)
+//                .collect(Collectors.toList());
+//    }
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAllPost() {
-        return postRepository.findAllByOrderByModifiedAtDesc()
-                .stream()
-                .map(PostResponseDto::new)
-                .collect(Collectors.toList());
+    public Page<Post> getAllPost(Model model, Pageable pageable) {
+        Page<Post> postPage;
+        postPage = postRepository.findAll(pageable);
+        model.addAttribute("postPage", postPage);
+
+        return postPage;
     }
 
     // 코스(게시글) 카테고리 조회

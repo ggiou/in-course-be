@@ -2,6 +2,8 @@ package com.example.week08.repository;
 
 import com.example.week08.domain.Member;
 import com.example.week08.domain.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -13,7 +15,7 @@ import java.util.Optional;
 
 
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
-    List<Post> findAllByOrderByModifiedAtDesc();
+//    Page<Post> findAllByOrderByModifiedAtDesc(Pageable pageable);
 
     List<Post> findAllByMember(Member member);
     @Query(value = "SELECT c" +
