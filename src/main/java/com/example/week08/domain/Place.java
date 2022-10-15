@@ -42,7 +42,6 @@ public class Place extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     private Post post;
-
     public Place(Post post, PlaceRequestDto placeRequestDto, String image) {
         this.content = placeRequestDto.getContent();
         this.address = placeRequestDto.getAddress();
@@ -52,13 +51,22 @@ public class Place extends Timestamped {
         this.placeImage = image;
         this.post = post;
     }
+//    public Place(Post post, PlacePutDto placePutDto, String image) {
+//        this.content = placePutDto.getContent();
+//        this.address = placePutDto.getAddress();
+//        this.coordinateX = placePutDto.getCoordinateX();
+//        this.coordinateY = placePutDto.getCoordinateY();
+//        this.placeName = placePutDto.getPlaceName();
+//        this.placeImage = image;
+//        this.post = post;
+//    }
 
-    public void update(PlacePutDto placePutDto, Post post, String image) {
-        this.content = placePutDto.getContent();
-        this.address = placePutDto.getAddress();
-        this.coordinateX = placePutDto.getCoordinateX();
-        this.coordinateY = placePutDto.getCoordinateY();
-        this.placeName = placePutDto.getPlaceName();
+    public void update(PlaceRequestDto placeRequestDto, Post post, String image) {
+        this.content = placeRequestDto.getContent();
+        this.address = placeRequestDto.getAddress();
+        this.coordinateX = placeRequestDto.getCoordinateX();
+        this.coordinateY = placeRequestDto.getCoordinateY();
+        this.placeName = placeRequestDto.getPlaceName();
         this.placeImage = image;
         this.post = post;
     }

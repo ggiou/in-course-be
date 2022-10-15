@@ -15,7 +15,7 @@ import java.util.Optional;
 
 
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
-//    Page<Post> findAllByOrderByModifiedAtDesc(Pageable pageable);
+    Page<Post> findAllByOrderByModifiedAtDesc(Pageable pageable);
 
     List<Post> findAllByMember(Member member);
     @Query(value = "SELECT c" +

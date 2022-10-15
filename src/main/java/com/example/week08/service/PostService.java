@@ -81,12 +81,16 @@ public class PostService {
 //    }
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public Page<Post> getAllPost(Model model, Pageable pageable) {
-        Page<Post> postPage;
-        postPage = postRepository.findAll(pageable);
-        model.addAttribute("postPage", postPage);
+    public List<PostResponseDto> getAllPost(Model model, Pageable pageable) {
+//        Page<Post> postPage;
+//        postPage = postRepository.findAll(pageable);
+        List<PostResponseDto> ResponsePage = postRepository.findAllByOrderByModifiedAtDesc(pageable)
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+        model.addAttribute("postPage", ResponsePage);
 
-        return postPage;
+        return ResponsePage;
     }
 
     // 코스(게시글) 카테고리 조회
@@ -115,7 +119,7 @@ public class PostService {
 
     // 코스 게시글 수정(카드 이미지 통합)
     @Transactional
-    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, List<MultipartFile> image, Member member) throws IOException {
+    public Post postUpdate(Long courseId, PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -143,10 +147,10 @@ public class PostService {
 
             }
         }
-        post.update(postPlacePutDto.getPostRequestDto(), postImage, member);
-        for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
+        post.update(postPlaceDto.getPostRequestDto(), postImage, member);
+        for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
 
-            PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
+            PlaceRequestDto place = postPlaceDto.getPlaceRequestDtoList().get(i);
             placeService.placeUpdate(courseId, place, placeImage);
         }
 

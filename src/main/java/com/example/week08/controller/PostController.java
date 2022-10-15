@@ -53,16 +53,16 @@ public class PostController {
 
     // 코스(게시글) 전체 조회
     @GetMapping("/api/course")
-    public Page<Post> getAllPosts(Model model,
+    public List<PostResponseDto> getAllPosts(Model model,
                                   @PageableDefault(size=15, sort="id",
             direction = Sort.Direction.DESC)Pageable pageable) {
         return postService.getAllPost(model,pageable);
     }
 
-    // 코스(게시글) 수정
+//     코스(게시글) 수정
     @PutMapping( "/api/course/{courseId}")
     public Post updatePost(@PathVariable Long courseId,
-                           @RequestPart(value = "data") @Valid PostPlacePutDto requestDto,
+                           @RequestPart(value = "data") @Valid PostPlaceDto requestDto,
                            @RequestPart(value = "image" ,required = false) @Valid List<MultipartFile> image,
                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return postService.postUpdate(courseId, requestDto, image, userDetails.getMember());
