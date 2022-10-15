@@ -8,6 +8,7 @@ import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 @Builder
@@ -23,7 +24,9 @@ public class Member extends Timestamped{
     private Long id;
     @NotNull
     private String email;
-    @Column
+
+    @NotNull
+    @Column(unique = true)
     private String nickname;
     @NotNull
     private String password;
@@ -42,7 +45,7 @@ public class Member extends Timestamped{
     @PrePersist
     public void prePersist(){
         this.location = this.location == null ? "현재 위치가 지정되어있지 않습니다." : this.location;
-        this.nickname = this.nickname == null ? "현재 닉네임이 지정되어있지 않습니다." : this.nickname;
+        this.nickname = this.nickname == null ? UUID.randomUUID().toString() : this.nickname;
     }
 
     @Override
