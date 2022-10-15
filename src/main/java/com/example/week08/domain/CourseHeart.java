@@ -1,6 +1,7 @@
 package com.example.week08.domain;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -22,13 +23,11 @@ public class CourseHeart {
     @ManyToOne
     @JoinColumn
     private Member member;
-    @Column
-    private Boolean heart;
+
 
     public CourseHeart(Post post, Member member) {
         this.post = post;
         this.member = member;
-        this.heart = Boolean.TRUE;
     }
 }
 

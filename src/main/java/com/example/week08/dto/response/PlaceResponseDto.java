@@ -30,7 +30,7 @@ public class PlaceResponseDto {
         this.coordinateX = place.getCoordinateX();
         this.coordinateY = place.getCoordinateY();
         this.placeName = place.getPlaceName();
-        this.heartPlace = place.getHeart_place();
+        this.heartPlace = place.getHeart();
 //        this.post = place.getPost();
         this.createdAt = place.getCreatedAt();
         this.modifiedAt = place.getModifiedAt();
