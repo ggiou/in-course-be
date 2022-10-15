@@ -36,7 +36,7 @@ public class Place extends Timestamped {
     private String placeName;//장소명
     @ColumnDefault("0")
     @Min(0)
-    private int heart_place;
+    private int heart;
 
     @JoinColumn(name = "Course_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,14 +63,9 @@ public class Place extends Timestamped {
         this.post = post;
     }
 
-    // 장소(카드) 찜하기
-    public void addHeart() {
-        this.heart_place += 1;
-    }
-
-    // 장소(카드) 찜하기 취소
-    public void deleteHeart() {
-        this.heart_place -= 1;
+    // 장소(카드) 찜하기 총 개수 저장
+    public void addCountHeart(int countHeart) {
+        this.heart = countHeart;
     }
 
 }
