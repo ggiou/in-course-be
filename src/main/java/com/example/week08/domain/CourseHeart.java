@@ -1,9 +1,10 @@
 package com.example.week08.domain;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+
+import static java.lang.Boolean.TRUE;
 
 @Getter
 @Setter
@@ -24,10 +25,14 @@ public class CourseHeart {
     @JoinColumn
     private Member member;
 
+    @Column
+    private boolean heart;
+
 
     public CourseHeart(Post post, Member member) {
         this.post = post;
         this.member = member;
+        this.heart = TRUE;
     }
 }
 
