@@ -28,9 +28,15 @@ public class ScoreService {
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
 
+        if (scoreRepository.findScoreByPostAndMember(post, member).isPresent()) {
+            scoreRepository.deleteByPostAndMember(post, member);
+        }
+
         scoreRepository.save(new Score(post, scoreRequestDto, member));
 
-        post.createScore(scoreRequestDto);
+        double avgScore = scoreRepository.findAvgScore(courseId);
+
+        post.addAvgScore(avgScore);
         postRepository.save(post);
     }
 
