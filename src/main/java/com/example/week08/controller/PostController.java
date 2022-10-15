@@ -10,8 +10,13 @@ import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,10 +45,18 @@ public class PostController {
         return postService.getPost(courseId);
     }
 
+//    // 코스(게시글) 전체 조회
+//    @GetMapping("/api/course")
+//    public List<PostResponseDto> getAllPosts() {
+//        return postService.getAllPost();
+//    }
+
     // 코스(게시글) 전체 조회
     @GetMapping("/api/course")
-    public List<PostResponseDto> getAllPosts() {
-        return postService.getAllPost();
+    public Page<Post> getAllPosts(Model model,
+                                  @PageableDefault(size=15, sort="id",
+            direction = Sort.Direction.DESC)Pageable pageable) {
+        return postService.getAllPost(model,pageable);
     }
 
     // 코스(게시글) 수정

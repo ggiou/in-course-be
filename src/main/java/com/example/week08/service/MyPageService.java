@@ -158,13 +158,13 @@ public class MyPageService {
             sumHeart += post.get(i).getHeart();
         }
 
-        if (sumHeart >= 0 && sumHeart < 100){
+        if (sumHeart >= 0 && sumHeart < 10){
             badge = "아싸";
-        }else if(sumHeart >= 100 && sumHeart < 500){
+        }else if(sumHeart >= 10 && sumHeart < 30){
             badge = "자발적 아싸";
-        }else if(sumHeart >= 500 && sumHeart < 1000){
+        }else if(sumHeart >= 30 && sumHeart < 60){
             badge = "흔남흔녀";
-        }else if(sumHeart >= 1000 && sumHeart < 5000){
+        }else if(sumHeart >= 60 && sumHeart < 100){
             badge = "인싸";
         }else{
             badge = "핵인싸";

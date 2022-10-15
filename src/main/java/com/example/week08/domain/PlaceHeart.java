@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import static java.lang.Boolean.TRUE;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,10 +25,14 @@ public class PlaceHeart {
     @JoinColumn
     private Member member;
 
+    @Column
+    private boolean heart;
+
 
     public PlaceHeart(Place place, Member member) {
         this.place = place;
         this.member = member;
+        this.heart = TRUE;
     }
 }
 
