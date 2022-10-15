@@ -4,15 +4,12 @@ import com.example.week08.domain.*;
 import com.example.week08.dto.response.CourseHeartResponseDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
-import com.example.week08.jwt.TokenProvider;
+
 import com.example.week08.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -37,9 +34,9 @@ public class HeartService {
         }
 
         courseHeartRepository.save(new CourseHeart(post, member));
+        int countHeart = courseHeartRepository.findCountHeart(courseId);
 
-        post.addHeart();
-        postRepository.save(post);
+        post.addCountHeart(countHeart);
 
         return new CourseHeartResponseDto(post, member);
 
@@ -58,9 +55,10 @@ public class HeartService {
         }
 
         courseHeartRepository.delete(heartOptional.get());
+        int countHeart = courseHeartRepository.findCountHeart(courseId);
 
-        post.deleteHeart();
-        postRepository.save(post);
+        post.addCountHeart(countHeart);
+
     }
 
     // 장소(카드) 찜하기
@@ -70,15 +68,15 @@ public class HeartService {
                 () -> new BusinessException("존재하지 않는 place id 입니다.", ErrorCode.PLACE_NOT_EXIST)
         );
 
-        if (placeHeartRepository.findHeartByPlaceIdAndMemberId(placeId, member.getId()).isPresent()) {
+        if (placeHeartRepository.findByPlaceAndMember(place, member).isPresent()) {
             throw new BusinessException("이미 찜한 place 입니다.", ErrorCode.ALREADY_HEARTED);
         }
 
-        PlaceHeart placeHeart = new PlaceHeart(placeId, member);
-        placeHeartRepository.save(placeHeart);
+        placeHeartRepository.save(new PlaceHeart(place, member));
+        int countHeart = placeHeartRepository.findCountHeart(placeId);
 
-        place.addHeart();
-        placeRepository.save(place);
+        place.addCountHeart(countHeart);
+
     }
 
     // 장소(카드) 찜하기 취소
@@ -87,7 +85,7 @@ public class HeartService {
         Place place = placeRepository.findById(placeId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 place id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-        Optional<PlaceHeart> heartOptional = placeHeartRepository.findHeartByPlaceIdAndMemberId(placeId, member.getId());
+        Optional<PlaceHeart> heartOptional = placeHeartRepository.findByPlaceAndMember(place, member);
 
         if (heartOptional.isEmpty()) {
             throw new BusinessException("찜하지 않은 course 입니다.", ErrorCode.HEART_NOT_FOUND);
@@ -95,8 +93,10 @@ public class HeartService {
 
         placeHeartRepository.delete(heartOptional.get());
 
-        place.deleteHeart();
-        placeRepository.save(place);
+        int countHeart = placeHeartRepository.findCountHeart(placeId);
+
+        place.addCountHeart(countHeart);
     }
+
 
 }
