@@ -33,7 +33,8 @@ public class PostService {
     private final PlaceService placeService;
     private final PlaceRepository placeRepository;
     private final OpenWeatherDataRepository openWeatherDataRepository;
-    private final HeartRepository heartRepository;
+    private final CourseHeartRepository courseHeartRepository;
+    private final PlaceHeartRepository placeHeartRepository;
     // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
     public Post postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
@@ -174,6 +175,7 @@ public class PostService {
                 String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
                 s3Uploader.deleteImage(deleteUrl);
                 placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+                placeHeartRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
             }
         }
 
@@ -184,7 +186,7 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
-        heartRepository.deleteAllByPostId(courseId);
+        courseHeartRepository.deleteById(courseId);
     }
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
@@ -200,7 +202,7 @@ public class PostService {
             searchKeys.put("region", regionChange(openWeatherData.get().getRegion()));//지역
         if (openWeatherData.get().getSeason() != null) searchKeys.put("season", openWeatherData.get().getSeason());//계절
 
-        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingInt(PostResponseGetDto::getAvgScore);
+        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingDouble(PostResponseGetDto::getAvgScore);
 
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
@@ -214,7 +216,7 @@ public class PostService {
         Map<String, Object> searchKeys = new HashMap<>();
         searchKeys.put("newPost", true); //새로운 게시물
 
-        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingInt(PostResponseGetDto::getAvgScore);
+        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingDouble(PostResponseGetDto::getAvgScore);
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
                 .map(PostResponseGetDto::new)

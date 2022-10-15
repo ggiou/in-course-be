@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import static java.lang.Boolean.TRUE;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,13 +24,15 @@ public class CourseHeart {
     @ManyToOne
     @JoinColumn
     private Member member;
+
     @Column
-    private Boolean heart;
+    private boolean heart;
+
 
     public CourseHeart(Post post, Member member) {
         this.post = post;
         this.member = member;
-        this.heart = Boolean.TRUE;
+        this.heart = TRUE;
     }
 }
 

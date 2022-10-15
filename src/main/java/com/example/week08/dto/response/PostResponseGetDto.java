@@ -21,7 +21,7 @@ public class PostResponseGetDto {
     private String region;
     private String season;
     private String who;
-    private int avgScore;
+    private double avgScore;
     private int heart;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
