@@ -41,15 +41,10 @@ public class Post extends Timestamped {
     @NotNull
     private String who;
     @ColumnDefault("0")
-    private int num;
-    @ColumnDefault("0")
-    private int score;
-    @ColumnDefault("0")
-    private int avgScore;
+    private double avgScore;
     @Column
     private boolean newPost = true;
     @ColumnDefault("0")
-    @Min(0)
     private int heart;
 
 
@@ -128,29 +123,19 @@ public class Post extends Timestamped {
         this.image = image;
         this.member = member;
     }
-    // 찜하기 상태 동기화
-    public void syncHeart(int num) {
-        this.heart = (num);
-    }
+
     public void updatePostByNewPost(boolean newPost) {
         this.newPost = newPost;
     }
 
-    // 코스(게시글) 찜하기
-    public void addHeart() {
-        this.heart += 1;
+    // 코스(게시글) 찜하기 총 개수 저장
+    public void addCountHeart(int countHeart) {
+        this.heart = countHeart;
     }
 
-    // 코스(게시글) 찜하기 취소
-    public void deleteHeart() {
-        this.heart -= 1;
-    }
-
-    // 코스(게시글) 평가 점수 주기
-    public void createScore(ScoreRequestDto requestDto) {
-        this.score += requestDto.getScore();
-        this.num += 1;
-        this.avgScore = (score/num);
+    // 코스(게시글) 평가 점수 저장
+    public void addAvgScore(double avgScore) {
+        this.avgScore = avgScore;
     }
     public void setPlace(Place place) {
         this.place.add(place);

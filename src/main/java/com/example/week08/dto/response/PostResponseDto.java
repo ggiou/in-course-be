@@ -23,7 +23,7 @@ public class PostResponseDto {
     private String region;
     private String season;
     private String who;
-    private int avgScore;
+    private double avgScore;
     private int heart;
     private Long memberId;
     private String email;

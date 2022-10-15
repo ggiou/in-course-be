@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 
+import static java.lang.Boolean.TRUE;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,18 +18,21 @@ public class PlaceHeart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long placeId;
+    @ManyToOne
+    @JoinColumn
+    private Place place;
     @ManyToOne
     @JoinColumn
     private Member member;
-    @Column
-    private Boolean heart;
 
-    public PlaceHeart(Long placeId, Member member) {
-        this.placeId = placeId;
+    @Column
+    private boolean heart;
+
+
+    public PlaceHeart(Place place, Member member) {
+        this.place = place;
         this.member = member;
-        this.heart = Boolean.TRUE;
+        this.heart = TRUE;
     }
 }
 
