@@ -20,6 +20,7 @@ public class CourseHeartService {
 
     private final CourseHeartRepository courseHeartRepository;
     private final PostRepository postRepository;
+    private final MyPageService myPageService;
 
     // 코스(게시글) 찜하기
     @Transactional
@@ -36,7 +37,7 @@ public class CourseHeartService {
         int countHeart = courseHeartRepository.findCountHeart(courseId);
 
         post.addCountHeart(countHeart);
-
+        myPageService.heartSumMember();
         return new CourseHeartResponseDto(post, member);
 
     }
@@ -57,6 +58,6 @@ public class CourseHeartService {
         int countHeart = courseHeartRepository.findCountHeart(courseId);
 
         post.addCountHeart(countHeart);
-
+        myPageService.heartSumMember();
     }
 }
