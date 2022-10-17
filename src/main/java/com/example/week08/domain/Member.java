@@ -69,6 +69,9 @@ public class Member extends Timestamped{
         this.password = newPassword;
         this.profileImage = imageUrl;
     }
+    public void badgeupdate(String badge){
+        this.badge = badge;
+    }
 
     public void detialSignup(String nickname, String location){
         this.nickname = nickname;

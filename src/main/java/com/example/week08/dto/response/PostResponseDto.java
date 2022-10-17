@@ -29,6 +29,7 @@ public class PostResponseDto {
     private String nickname;
     private String profileImage;
     private String location;
+    private String badge;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<Place> place;
@@ -49,6 +50,7 @@ public class PostResponseDto {
         this.nickname = post.getMember().getNickname();
         this.profileImage = post.getMember().getProfileImage();
         this.location = post.getMember().getLocation();
+        this.badge = post.getMember().getBadge();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
     }
