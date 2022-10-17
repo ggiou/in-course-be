@@ -6,7 +6,6 @@ import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
-import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.*;
@@ -35,6 +34,7 @@ public class PostService {
     private final OpenWeatherDataRepository openWeatherDataRepository;
     private final CourseHeartRepository courseHeartRepository;
     private final PlaceHeartRepository placeHeartRepository;
+
     // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
     public Post postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
@@ -52,7 +52,6 @@ public class PostService {
 
                 }
             }
-
 
         Post post = new Post(postPlaceDto.getPostRequestDto(), postImage, member);
         Long courseId = postRepository.save(post).getId();
@@ -187,7 +186,7 @@ public class PostService {
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
     @Transactional(readOnly = true)
-    public Optional<PostResponseGetDto> getRecommended(Member member) {
+    public Optional<PostResponseDto> getRecommended(Member member) {
 
         Optional<OpenWeatherData> openWeatherData = openWeatherDataRepository.findByMember(member);
         Map<String, Object> searchKeys = new HashMap<>();
@@ -198,24 +197,24 @@ public class PostService {
             searchKeys.put("region", regionChange(openWeatherData.get().getRegion()));//지역
         if (openWeatherData.get().getSeason() != null) searchKeys.put("season", openWeatherData.get().getSeason());//계절
 
-        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingDouble(PostResponseGetDto::getAvgScore);
+        Comparator<PostResponseDto> scoreComparator = Comparator.comparingDouble(PostResponseDto::getAvgScore);
 
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
-                .map(PostResponseGetDto::new)
+                .map(PostResponseDto::new)
                 .collect(Collectors.maxBy(scoreComparator));
     }
     //메인 비로그인 유저용 새로운게시물/ 평점기반
     @Transactional(readOnly = true)
-    public Optional<PostResponseGetDto> getCommonRecommended() {
+    public Optional<PostResponseDto> getCommonRecommended() {
 
         Map<String, Object> searchKeys = new HashMap<>();
         searchKeys.put("newPost", true); //새로운 게시물
 
-        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingDouble(PostResponseGetDto::getAvgScore);
+        Comparator<PostResponseDto> scoreComparator = Comparator.comparingDouble(PostResponseDto::getAvgScore);
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
-                .map(PostResponseGetDto::new)
+                .map(PostResponseDto::new)
                 .collect(Collectors.maxBy(scoreComparator));
     }
 

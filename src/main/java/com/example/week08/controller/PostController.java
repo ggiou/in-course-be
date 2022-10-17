@@ -7,7 +7,6 @@ import com.example.week08.dto.request.PostPlaceDto;
 import com.example.week08.dto.request.PostPlacePutDto;
 import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
-import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -85,13 +84,13 @@ public class PostController {
 
     //메인 날씨/지역/계절/평점 기반 추천 회원용
     @GetMapping("/api/course/member/recommended")
-    public Optional<PostResponseGetDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public Optional<PostResponseDto> recommendedGet(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return postService.getRecommended(userDetails.getMember());
     }
 
     //메인 평점 기반 추천 비회원용
     @GetMapping("/api/course/common/recommended")
-    public Optional<PostResponseGetDto>  commonRecommendedGet(){
+    public Optional<PostResponseDto>  commonRecommendedGet(){
         return postService.getCommonRecommended();
     }
 

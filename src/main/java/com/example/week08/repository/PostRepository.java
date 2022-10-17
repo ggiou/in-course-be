@@ -26,6 +26,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
     Optional<Post> findByJoinPlace(@Param("CourseId") Long CourseId);
 
 
+    // 카테고리 조회
     @Override
     List<Post> findAll(Specification<Post> spec);
 
