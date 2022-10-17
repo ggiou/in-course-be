@@ -148,27 +148,35 @@ public class MyPageService {
     } //회원(내) 정보 수정하기
 
     //좋아요 갯수에 따른 뱃지 지정
-    @Transactional
-    public String heartSumMember(Member member){
-        String badge;
-        List<Post> post = postRepository.findAllByMember(member);
-
-        int sumHeart = 0;
-        for (int i = 0; i < post.size(); i++){
-            sumHeart += post.get(i).getHeart();
-        }
-
-        if (sumHeart >= 0 && sumHeart < 10){
-            badge = "아싸";
-        }else if(sumHeart >= 10 && sumHeart < 30){
-            badge = "자발적 아싸";
-        }else if(sumHeart >= 30 && sumHeart < 60){
-            badge = "흔남흔녀";
-        }else if(sumHeart >= 60 && sumHeart < 100){
-            badge = "인싸";
-        }else{
-            badge = "핵인싸";
-        }
-        return badge;
-    }
+    //게시물의 맴버값을 받고 그 맴버의 좋아요수대로 뱃지지급
+    //뱃지를 맴버 db에 저장
+//    @Transactional
+//    public String heartSumMember(){
+//        List<Member> member = memberRepository.findAll();
+//        String badge = null;
+//        List<Post> post;
+//        for (Member members : member) {
+//            post = postRepository.findAllByMember(members);
+//            int sumHeart = 0;
+//            for (Post posts : post) {
+//                sumHeart += posts.getHeart();
+//            }
+//
+//            if (sumHeart >= 0 && sumHeart < 10) {
+//                badge = "아싸";
+//            } else if (sumHeart >= 10 && sumHeart < 30) {
+//                badge = "자발적 아싸";
+//            } else if (sumHeart >= 30 && sumHeart < 60) {
+//                badge = "흔남흔녀";
+//            } else if (sumHeart >= 60 && sumHeart < 100) {
+//                badge = "인싸";
+//            } else {
+//                badge = "핵인싸";
+//            }
+//        }
+//        //맴버에 뱃지값을 저장
+//        memberRepository.save(badge).getId();
+//
+//        return badge;
+//    }
 }

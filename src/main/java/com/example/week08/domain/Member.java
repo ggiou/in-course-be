@@ -40,6 +40,8 @@ public class Member extends Timestamped{
     private String naverId;
     @NotNull
     private int emailAuth;
+    @Column
+    private String badge;
 
 
     @PrePersist

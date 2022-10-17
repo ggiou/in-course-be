@@ -186,7 +186,7 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
-        courseHeartRepository.deleteById(courseId);
+//        courseHeartRepository.deleteById(courseId);
     }
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
