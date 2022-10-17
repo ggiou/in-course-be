@@ -1,5 +1,6 @@
 package com.example.week08.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,16 +19,19 @@ public class CourseHeart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn
-    private Post post;
+//    @ManyToOne
+//    @JoinColumn
+//    private Post post;
     @ManyToOne
     @JoinColumn
     private Member member;
 
     @Column
     private boolean heart;
-
+    @JoinColumn(name = "Course_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Post post;
 
     public CourseHeart(Post post, Member member) {
         this.post = post;
