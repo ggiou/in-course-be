@@ -68,7 +68,7 @@ public class PostController {
     // 코스(게시글) 삭제
     @PostMapping( "/api/course/{courseId}")
     public ResponseEntity<String> deletePost(@PathVariable Long courseId,
-                                             @RequestBody @Valid PlaceDeleteDto requestDto,
+//                                              @RequestBody @Valid PlaceDeleteDto requestDto,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         postService.postDelete(courseId, requestDto, userDetails.getMember());
         return ResponseEntity.ok("게시물 삭제 성공");
