@@ -65,9 +65,6 @@ public class CourseHeartService {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 course id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-        if (courseHeartRepository.findByPostAndMember(post, member).isPresent()) {
-            return true;
-        }
-        return false;
+        return courseHeartRepository.findByPostAndMember(post, member).isPresent();
     }
 }

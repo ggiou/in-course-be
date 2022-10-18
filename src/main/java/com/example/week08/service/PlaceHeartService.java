@@ -56,4 +56,11 @@ public class PlaceHeartService {
 
         place.addCountHeart(countHeart);
     }
+    @Transactional
+    public boolean heartplaceget(Long placeId, Member member){
+        Place place = placeRepository.findById(placeId).orElseThrow(
+                () -> new BusinessException("존재하지 않는 place id 입니다.", ErrorCode.POST_NOT_EXIST)
+        );
+        return placeHeartRepository.findByPlaceAndMember(place, member).isPresent();
+    }
 }
