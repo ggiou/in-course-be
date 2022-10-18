@@ -66,7 +66,7 @@ public class PostController {
     }
 
     // 코스(게시글) 삭제
-    @DeleteMapping( "/api/course/{courseId}")
+    @PostMapping( "/api/course/{courseId}")
     public ResponseEntity<String> deletePost(@PathVariable Long courseId,
                                              @RequestBody @Valid PlaceDeleteDto requestDto,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
