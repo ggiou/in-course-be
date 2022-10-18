@@ -48,6 +48,10 @@ public class Member extends Timestamped{
     @JoinColumn(name = "Member_id")
     private List<CourseHeart> courseHeart;
 
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "Member_id")
+//    private List<Post> post;
+
     @PrePersist
     public void prePersist(){
         this.location = this.location == null ? "현재 위치가 지정되어있지 않습니다." : this.location;

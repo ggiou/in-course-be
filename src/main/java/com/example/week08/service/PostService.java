@@ -10,6 +10,7 @@ import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -34,7 +35,7 @@ public class PostService {
 
     // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
-    public Post postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
+    public void postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
         List<String> imgPaths  = s3Uploader.uploadList(image);
         System.out.println("IMG 경로들 : " + imgPaths);
         //uploadList에서 받은 이미지 경로 리스트를 하나씩 빼서 첫번째는 post에 나머지는 place에 하나씩 할당해줘야함
@@ -55,7 +56,6 @@ public class PostService {
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
             placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), placeImage);
         }
-        return post;
         }
 
     // 코스(게시글) 단건 조회
@@ -115,7 +115,7 @@ public class PostService {
 
     // 코스 게시글 수정(카드 이미지 통합)
     @Transactional
-    public Post postUpdate(Long courseId, PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member) throws IOException {
+    public void postUpdate(Long courseId, PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -150,30 +150,29 @@ public class PostService {
             placeService.placeUpdate(courseId, place, placeImage);
         }
 
-        return post;
     }
 
     // 코스(게시글) 삭제(카드이미지 삭제 통합)
     @Transactional
-    public void postDelete(Long courseId, Member member) throws IOException {
+    public void postDelete(Long courseId, PlaceDeleteDto placeDeleteDto, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         if (!post.getMember().getId().equals(member.getId())) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
-//        for (int i = 0; i < placeDeleteDto.getPlaceId().size(); i++) {
-//            Place place = placeRepository.findById(placeDeleteDto.getPlaceId().get(i)).orElseThrow(() ->
-//                    new BusinessException("카드가 존재하지 않습니다.", ErrorCode.PLACE_NOT_EXIST)
-//            );
-//            String imageUrlPlace = place.getPlaceImage();
-//            if (imageUrlPlace != null) {
-//                String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
-//                s3Uploader.deleteImage(deleteUrl);
-//                placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
-//                placeHeartRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
-//            }
-//        }
+        for (int i = 0; i < placeDeleteDto.getPlaceId().size(); i++) {
+            Place place = placeRepository.findById(placeDeleteDto.getPlaceId().get(i)).orElseThrow(() ->
+                    new BusinessException("카드가 존재하지 않습니다.", ErrorCode.PLACE_NOT_EXIST)
+            );
+            String imageUrlPlace = place.getPlaceImage();
+            if (imageUrlPlace != null) {
+                String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
+                s3Uploader.deleteImage(deleteUrl);
+                placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+                placeHeartRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+            }
+        }
 
         String imageUrl = post.getImage();
         if (imageUrl != null) {

@@ -104,6 +104,10 @@ public class Post extends Timestamped {
     @JoinColumn(name = "Course_Id")
     private List<CourseHeart> courseHeart;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "Course_Id")
+    private List<Score> scores;
+
     // 코스(게시글) 작성
     public Post(PostRequestDto postRequestDto, String image, Member member) {
         this.title = postRequestDto.getTitle();
