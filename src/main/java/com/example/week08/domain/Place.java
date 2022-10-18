@@ -1,7 +1,6 @@
 package com.example.week08.domain;
 
 
-import com.example.week08.dto.request.PlacePutDto;
 import com.example.week08.dto.request.PlaceRequestDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;

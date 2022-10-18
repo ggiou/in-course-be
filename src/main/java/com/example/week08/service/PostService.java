@@ -1,9 +1,6 @@
 package com.example.week08.service;
 
-import com.example.week08.domain.Member;
-import com.example.week08.domain.OpenWeatherData;
-import com.example.week08.domain.Place;
-import com.example.week08.domain.Post;
+import com.example.week08.domain.*;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.errorhandler.BusinessException;

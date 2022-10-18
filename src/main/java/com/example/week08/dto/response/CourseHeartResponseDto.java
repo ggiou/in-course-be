@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CourseHeartResponseDto {
     private String message;
-    private Post post;
+    private boolean heart;
     private Long memberId;
     private String email;
     private String nickname;
 
-    public CourseHeartResponseDto(Post post, Member member) {
+    public CourseHeartResponseDto(Member member) {
         this.message = "찜하기 성공";
-        this.post = post;
+        this.heart = true;
         this.memberId = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
@@ -29,7 +29,7 @@ public class CourseHeartResponseDto {
 
     public CourseHeartResponseDto(CourseHeart courseHeart) {
         this.message = "내가 찜한 course";
-        this.post = courseHeart.getPost();
+        this.heart = true;
         this.memberId = courseHeart.getMember().getId();
         this.email = courseHeart.getMember().getEmail();
         this.nickname = courseHeart.getMember().getNickname();

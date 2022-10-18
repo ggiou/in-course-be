@@ -22,8 +22,9 @@ public class CourseHeart {
 //    @ManyToOne
 //    @JoinColumn
 //    private Post post;
-    @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "Member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Member member;
 
     @Column

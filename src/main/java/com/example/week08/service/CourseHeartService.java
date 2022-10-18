@@ -28,7 +28,6 @@ public class CourseHeartService {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 course id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
-
         if (courseHeartRepository.findByPostAndMember(post, member).isPresent()) {
             throw new BusinessException("이미 찜한 course 입니다.", ErrorCode.ALREADY_HEARTED);
         }
@@ -38,7 +37,7 @@ public class CourseHeartService {
 
         post.addCountHeart(countHeart);
         myPageService.heartSumMember();
-        return new CourseHeartResponseDto(post, member);
+        return new CourseHeartResponseDto(member);
 
     }
 
@@ -59,5 +58,16 @@ public class CourseHeartService {
 
         post.addCountHeart(countHeart);
         myPageService.heartSumMember();
+    }
+
+    @Transactional
+    public boolean heartget(Long courseId, Member member){
+        Post post = postRepository.findById(courseId).orElseThrow(
+                () -> new BusinessException("존재하지 않는 course id 입니다.", ErrorCode.POST_NOT_EXIST)
+        );
+        if (courseHeartRepository.findByPostAndMember(post, member).isPresent()) {
+            return true;
+        }
+        return false;
     }
 }

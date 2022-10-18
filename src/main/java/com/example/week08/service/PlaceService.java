@@ -1,13 +1,9 @@
 package com.example.week08.service;
 
 
-import com.example.week08.domain.Member;
 import com.example.week08.domain.Place;
 import com.example.week08.domain.Post;
-import com.example.week08.dto.request.PlacePutDto;
 import com.example.week08.dto.request.PlaceRequestDto;
-import com.example.week08.dto.request.PostPlacePutDto;
-import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.PlaceRepository;
@@ -15,11 +11,9 @@ import com.example.week08.repository.PostRepository;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.week08.errorhandler.ErrorCode.PLACE_NOT_EXIST;

@@ -100,7 +100,7 @@ public class Post extends Timestamped {
     @JoinColumn(name = "Course_Id")
     private List<Place> place;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "Course_Id")
     private List<CourseHeart> courseHeart;
 
