@@ -155,25 +155,25 @@ public class PostService {
 
     // 코스(게시글) 삭제(카드이미지 삭제 통합)
     @Transactional
-    public void postDelete(Long courseId, PlaceDeleteDto placeDeleteDto , Member member) throws IOException {
+    public void postDelete(Long courseId, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         if (!post.getMember().getId().equals(member.getId())) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
-        for (int i = 0; i < placeDeleteDto.getPlaceId().size(); i++) {
-            Place place = placeRepository.findById(placeDeleteDto.getPlaceId().get(i)).orElseThrow(() ->
-                    new BusinessException("카드가 존재하지 않습니다.", ErrorCode.PLACE_NOT_EXIST)
-            );
-            String imageUrlPlace = place.getPlaceImage();
-            if (imageUrlPlace != null) {
-                String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
-                s3Uploader.deleteImage(deleteUrl);
-                placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
-                placeHeartRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
-            }
-        }
+//        for (int i = 0; i < placeDeleteDto.getPlaceId().size(); i++) {
+//            Place place = placeRepository.findById(placeDeleteDto.getPlaceId().get(i)).orElseThrow(() ->
+//                    new BusinessException("카드가 존재하지 않습니다.", ErrorCode.PLACE_NOT_EXIST)
+//            );
+//            String imageUrlPlace = place.getPlaceImage();
+//            if (imageUrlPlace != null) {
+//                String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
+//                s3Uploader.deleteImage(deleteUrl);
+//                placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+//                placeHeartRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+//            }
+//        }
 
         String imageUrl = post.getImage();
         if (imageUrl != null) {
