@@ -1,9 +1,6 @@
 package com.example.week08.service;
 
-import com.example.week08.domain.Member;
-import com.example.week08.domain.OpenWeatherData;
-import com.example.week08.domain.Place;
-import com.example.week08.domain.Post;
+import com.example.week08.domain.*;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.errorhandler.BusinessException;
@@ -13,6 +10,7 @@ import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -37,7 +35,7 @@ public class PostService {
 
     // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
-    public Post postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
+    public void postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
         List<String> imgPaths  = s3Uploader.uploadList(image);
         System.out.println("IMG 경로들 : " + imgPaths);
         //uploadList에서 받은 이미지 경로 리스트를 하나씩 빼서 첫번째는 post에 나머지는 place에 하나씩 할당해줘야함
@@ -58,7 +56,6 @@ public class PostService {
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
             placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), placeImage);
         }
-        return post;
         }
 
     // 코스(게시글) 단건 조회
@@ -80,12 +77,16 @@ public class PostService {
 //    }
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public Page<Post> getAllPost(Model model, Pageable pageable) {
-        Page<Post> postPage;
-        postPage = postRepository.findAll(pageable);
-        model.addAttribute("postPage", postPage);
+    public List<PostResponseDto> getAllPost(Model model, Pageable pageable) {
+//        Page<Post> postPage;
+//        postPage = postRepository.findAll(pageable);
+        List<PostResponseDto> ResponsePage = postRepository.findAllByOrderByModifiedAtDesc(pageable)
+                .stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
+        model.addAttribute("postPage", ResponsePage);
 
-        return postPage;
+        return ResponsePage;
     }
 
     // 코스(게시글) 카테고리 조회
@@ -114,7 +115,7 @@ public class PostService {
 
     // 코스 게시글 수정(카드 이미지 통합)
     @Transactional
-    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, List<MultipartFile> image, Member member) throws IOException {
+    public void postUpdate(Long courseId, PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -142,19 +143,18 @@ public class PostService {
 
             }
         }
-        post.update(postPlacePutDto.getPostRequestDto(), postImage, member);
-        for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
+        post.update(postPlaceDto.getPostRequestDto(), postImage, member);
+        for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
 
-            PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
+            PlaceRequestDto place = postPlaceDto.getPlaceRequestDtoList().get(i);
             placeService.placeUpdate(courseId, place, placeImage);
         }
 
-        return post;
     }
 
     // 코스(게시글) 삭제(카드이미지 삭제 통합)
     @Transactional
-    public void postDelete(Long courseId, PlaceDeleteDto placeDeleteDto , Member member) throws IOException {
+    public void postDelete(Long courseId, PlaceDeleteDto placeDeleteDto, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -170,7 +170,6 @@ public class PostService {
                 String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
                 s3Uploader.deleteImage(deleteUrl);
                 placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
-                placeHeartRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
             }
         }
 
@@ -181,7 +180,7 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
-        courseHeartRepository.deleteById(courseId);
+//        courseHeartRepository.deleteById(courseId);
     }
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)

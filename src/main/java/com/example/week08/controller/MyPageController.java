@@ -41,10 +41,10 @@ public class MyPageController {
         return myPageService.updateProfile(profileRequestDto, request);
     }
 
-    //좋아요 갯수에 따른 뱃지 지정
-    @GetMapping("/api/member/heart")
-    public String memberHeartSum(@AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return myPageService.heartSumMember(userDetails.getMember());
-    }
+//    //좋아요 갯수에 따른 뱃지 지정
+//    @GetMapping("/api/member/heart")
+//    public String memberHeartSum()  {
+//        return myPageService.heartSumMember();
+//    }
 
 }

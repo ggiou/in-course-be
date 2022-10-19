@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
@@ -40,7 +41,16 @@ public class Member extends Timestamped{
     private String naverId;
     @NotNull
     private int emailAuth;
+    @Column
+    private String badge;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "Member_id")
+    private List<CourseHeart> courseHeart;
+
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "Member_id")
+//    private List<Post> post;
 
     @PrePersist
     public void prePersist(){
@@ -66,6 +76,9 @@ public class Member extends Timestamped{
         this.location = location;
         this.password = newPassword;
         this.profileImage = imageUrl;
+    }
+    public void badgeupdate(String badge){
+        this.badge = badge;
     }
 
     public void detialSignup(String nickname, String location){

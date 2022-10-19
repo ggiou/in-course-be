@@ -33,4 +33,11 @@ public class CourseHeartController {
         courseHeartService.deletePostHeart(courseId, userDetails.getMember());
         return new ResponseEntity<>("찜하기 취소 성공", HttpStatus.OK);
     }
+    // 회원이 해당 게시물을 찜하기했는지
+    //게시물 아이디, 멤버 아이디를 받아서 courseheart에서 조회
+    @GetMapping("/api/course/heart/check/{courseId}")
+    public boolean getheart(@PathVariable Long courseId,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return courseHeartService.heartget(courseId, userDetails.getMember());
+    }
 }

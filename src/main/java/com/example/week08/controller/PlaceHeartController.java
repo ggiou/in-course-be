@@ -33,5 +33,11 @@ public class PlaceHeartController {
         placeHeartService.deletePlaceHeart(placeId, userDetails.getMember());
         return new ResponseEntity<>("찜하기 취소 성공", HttpStatus.OK);
     }
+    // 찜하기 체크
+    @GetMapping("/api/course/place/heart/check/{placeId}")
+    public boolean getplaceheart(@PathVariable Long placeId,
+                            @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return placeHeartService.heartplaceget(placeId, userDetails.getMember());
+    }
 
 }

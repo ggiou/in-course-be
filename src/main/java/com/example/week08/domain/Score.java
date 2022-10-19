@@ -1,6 +1,7 @@
 package com.example.week08.domain;
 
 import com.example.week08.dto.request.ScoreRequestDto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,8 +18,9 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "Course_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Post post;
     @ManyToOne
     @JoinColumn
