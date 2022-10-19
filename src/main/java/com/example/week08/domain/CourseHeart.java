@@ -19,9 +19,6 @@ public class CourseHeart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn
-//    private Post post;
     @JoinColumn(name = "Member_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
