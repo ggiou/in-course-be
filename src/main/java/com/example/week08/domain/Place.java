@@ -43,7 +43,7 @@ public class Place extends Timestamped {
     @JsonBackReference
     private Post post;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "place_id")
     private List<PlaceHeart> placeHeart;
     public Place(Post post, PlaceRequestDto placeRequestDto, String image) {
