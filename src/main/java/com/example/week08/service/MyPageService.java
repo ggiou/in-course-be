@@ -145,8 +145,12 @@ public class MyPageService {
             System.out.println(newPassword + "\n" + passwordConfirm + "                 비밀번호 변경 할 때\n\n");
         } //수정 때, 비밀번호를 어쨌든 암호화 해줘야 함
 
+        String gender = profileRequestDto.getGender();
+        if (gender == null || gender.isEmpty()) {
+            gender = member.getGender();
+        }
 
-        member.update(nickname, location, newPassword, imageUrl);
+        member.update(nickname, location, newPassword, imageUrl, gender);
         memberRepository.save(member);
 
         return new ProfileResponseDto(member);
