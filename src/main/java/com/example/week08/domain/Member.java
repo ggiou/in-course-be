@@ -29,6 +29,11 @@ public class Member extends Timestamped{
     @NotNull
     @Column(unique = true)
     private String nickname;
+
+    @Column
+    private String gender;
+
+
     @NotNull
     private String password;
     @Column
@@ -55,6 +60,7 @@ public class Member extends Timestamped{
     @PrePersist
     public void prePersist(){
         this.location = this.location == null ? "현재 위치가 지정되어있지 않습니다." : this.location;
+        this.nickname = this.nickname == null ? "현재 닉네임이 지정되어있지 않습니다." : this.nickname;
         this.nickname = this.nickname == null ? UUID.randomUUID().toString() : this.nickname;
     }
 
@@ -71,19 +77,21 @@ public class Member extends Timestamped{
     }
 
 
-    public void update(String nickname, String location, String newPassword, String imageUrl){
+    public void update(String nickname, String location, String newPassword, String imageUrl, String gender){
         this.nickname = nickname;
         this.location = location;
         this.password = newPassword;
         this.profileImage = imageUrl;
+        this.gender = gender;
     }
     public void badgeupdate(String badge){
         this.badge = badge;
     }
 
-    public void detialSignup(String nickname, String location){
+    public void detialSignup(String nickname, String location, String gender){
         this.nickname = nickname;
         this.location = location;
+        this.gender = gender;
     }
 
     public void setEmailAuth(){this.emailAuth = 1;} //이메일 인증 완료 된 상태

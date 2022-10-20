@@ -18,4 +18,6 @@ public class MemberDetailRequestDto {
     private String nickname;
 
     private String location;
+
+    private String gender;
 }

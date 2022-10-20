@@ -8,9 +8,7 @@ import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.*;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -67,19 +65,9 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
-//    // 코스(게시글) 전체 조회
-//    @Transactional(readOnly = true)
-//    public List<PostResponseDto> getAllPost() {
-//        return postRepository.findAllByOrderByModifiedAtDesc()
-//                .stream()
-//                .map(PostResponseDto::new)
-//                .collect(Collectors.toList());
-//    }
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
     public List<PostResponseDto> getAllPost(Model model, Pageable pageable) {
-//        Page<Post> postPage;
-//        postPage = postRepository.findAll(pageable);
         List<PostResponseDto> ResponsePage = postRepository.findAllByOrderByModifiedAtDesc(pageable)
                 .stream()
                 .map(PostResponseDto::new)
@@ -155,20 +143,15 @@ public class PostService {
     // 코스(게시글) 삭제(카드이미지 삭제 통합)
     @Transactional
     public void postDelete(Long courseId, Member member) throws IOException {
-        //바디로 placeId를 받지 않고 db조회를 통해 placeId를 가져와서 이미지를 삭제해야함!!!!!
         List<Place> placeList = placeRepository.findAll();
         List<Long> placeIdList = new ArrayList<Long>();
         for (int i = 0; i < placeList.size(); i++) {
             if (placeList.get(i).getPost().getId().equals(courseId)) {
-                //courseId 가 같으면 placeId를 가져온다
                 Long placeId = placeList.get(i).getId();
                 placeIdList.add(placeId);
             }
         }
 
-//        for (int i =0; i <placeList.size(); i++){
-//            if (placeList[i]equals)
-//        }
 
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
@@ -196,7 +179,6 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
-//        courseHeartRepository.deleteById(courseId);
     }
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
