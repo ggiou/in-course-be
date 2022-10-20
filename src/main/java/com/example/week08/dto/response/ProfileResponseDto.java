@@ -14,6 +14,7 @@ public class ProfileResponseDto {
     private Long id;
     private String email;
     private String nickname;
+    private String gender;
     private String location;
     private String image;
     private String password;
@@ -25,6 +26,7 @@ public class ProfileResponseDto {
         this.id = member.getId();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
+        this.gender = member.getGender();
         this.location = member.getLocation();
         this.image = member.getProfileImage();
         this.password = member.getPassword();
