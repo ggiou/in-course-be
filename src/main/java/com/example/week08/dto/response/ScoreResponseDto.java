@@ -1,11 +1,10 @@
 package com.example.week08.dto.response;
 
+import com.example.week08.domain.Score;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -13,10 +12,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ScoreResponseDto {
     private Long id;
-    private double score;
-    private double avgScore;
-    private Long postId;
     private String nickname;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private double score;
+    private Long courseId;
+    private String title;
+    private double avgScore;
+
+    public ScoreResponseDto(Score score) {
+        this.id = score.getMember().getId();
+        this.nickname = score.getMember().getNickname();
+        this.score = score.getScore();
+        this.courseId = score.getPost().getId();
+        this.title = score.getPost().getTitle();
+        this.avgScore = score.getPost().getAvgScore();
+
+    }
 }
