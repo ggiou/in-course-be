@@ -63,7 +63,8 @@ public class MemberService {
         }
         String nickname = requestDto.getNickname();
         String location = requestDto.getLocation();
-        member.detialSignup(nickname, location);
+        String gender = requestDto.getGender();
+        member.detialSignup(nickname, location, gender);
         return ResponseEntity.ok(new MemberResponseDto(true, requestDto.getNickname()+"님의 회원정보 저장이 성공하였습니다.",member));
     } //회원 가입 상세(지역, 닉네임)
 

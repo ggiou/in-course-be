@@ -19,7 +19,7 @@ public class PlaceHeart {
     private Long id;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "place_id")
     private Place place;
     @ManyToOne
     @JoinColumn

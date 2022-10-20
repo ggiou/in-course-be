@@ -1,5 +1,6 @@
 package com.example.week08.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -102,6 +103,7 @@ public class Post extends Timestamped {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "Course_Id")
+    @JsonIgnore
     private List<CourseHeart> courseHeart;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

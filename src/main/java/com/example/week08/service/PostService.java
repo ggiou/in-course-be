@@ -170,7 +170,6 @@ public class PostService {
                 String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
                 s3Uploader.deleteImage(deleteUrl);
                 placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
-                placeHeartRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
             }
         }
 

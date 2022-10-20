@@ -3,12 +3,14 @@ package com.example.week08.domain;
 
 import com.example.week08.dto.request.PlaceRequestDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Builder
 @Setter
@@ -37,10 +39,15 @@ public class Place extends Timestamped {
     @Min(0)
     private int heart;
 
-    @JoinColumn(name = "Course_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Course_id")
     @JsonBackReference
     private Post post;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "place_id")
+    @JsonIgnore
+    private List<PlaceHeart> placeHeart;
     public Place(Post post, PlaceRequestDto placeRequestDto, String image) {
         this.content = placeRequestDto.getContent();
         this.address = placeRequestDto.getAddress();
