@@ -177,7 +177,7 @@ public class MyPageService {
             } else {
                 badge = "핵인싸";
             }
-
+            members.setHeartSum(sumHeart);
             members.badgeupdate(badge);
                  }
     return badge;

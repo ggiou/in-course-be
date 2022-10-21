@@ -48,6 +48,8 @@ public class Member extends Timestamped{
     private int emailAuth;
     @Column
     private String badge;
+    @Column
+    private int heartSum;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "Member_id")
