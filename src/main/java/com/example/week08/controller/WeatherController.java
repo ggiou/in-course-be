@@ -21,7 +21,7 @@ public class WeatherController {
     private final OpenWeatherService openWeather;
     private final ClothesSuppliesRecommendService clothesSupplies;
 
-    @PostMapping( "/api/weather/open")
+    @GetMapping( "/api/weather/open")
     public WeatherDataResponseDto saveWeather(@RequestBody @Valid WeatherDataRequestDto requestDto, HttpServletRequest request) throws Exception {
         return openWeather.restApiGetWeather(requestDto, request);
     }
