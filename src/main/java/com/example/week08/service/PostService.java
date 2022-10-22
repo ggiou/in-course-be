@@ -54,7 +54,7 @@ public class PostService {
         Post post = new Post(postPlaceDto.getPostRequestDto(), postImage, member);
         Long courseId = postRepository.save(post).getId();
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
-            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), placeImage);
+            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i));
         }
         }
 
@@ -111,30 +111,39 @@ public class PostService {
         }
 
         String imageUrl = post.getImage();
-        //이미지 존재시 먼저 삭제후 다시 업로드.
-        if (imageUrl != null) {
-            String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
-            s3Uploader.deleteImage(deleteUrl);
+        String postImage = null;
+        List<String> imgPaths = null;
+        //이미지가 널값으로 들어오면 기존db에 있던 이미지 경로를 넣어준다
+        if (image.get(0).isEmpty()){
+            postImage = imageUrl;
+        }else {
+            //이미지 존재시 먼저 삭제후 다시 업로드.
+            if (imageUrl != null) {
+                String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
+                s3Uploader.deleteImage(deleteUrl);
+            }
+            imgPaths = s3Uploader.uploadList(image);
+
         }
-        List<String> imgPaths  = s3Uploader.uploadList(image);
+
         System.out.println("IMG 경로들 : " + imgPaths);
 
-        String postImage = null;
-        List<String> placeImage = new ArrayList<>(1);
-        //만약 imgPaths의 길이가 0이면
-        for (int i = 0; i < imgPaths.size(); i++) {
-            if (i == 0) {
-                postImage = imgPaths.get(i);
-            }else{
-                placeImage.add(i-1, imgPaths.get(i));
-
-            }
-        }
+//            List<String> placeImage = new ArrayList<>(1);
+//            //만약 imgPaths의 길이가 0이면
+//            for (int i = 0; i < imgPaths.size(); i++) {
+//                if (i == 0) {
+//                    postImage = imgPaths.get(i);
+//                } else {
+//                    placeImage.add(i - 1, imgPaths.get(i));
+//
+//                }
+//            }
+        
         post.update(postPlaceDto.getPostRequestDto(), postImage, member);
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
 
             PlaceRequestDto place = postPlaceDto.getPlaceRequestDtoList().get(i);
-            placeService.placeUpdate(courseId, place, placeImage);
+            placeService.placeUpdate(courseId, place);
         }
 
     }

@@ -48,13 +48,13 @@ public class Place extends Timestamped {
     @JoinColumn(name = "place_id")
     @JsonIgnore
     private List<PlaceHeart> placeHeart;
-    public Place(Post post, PlaceRequestDto placeRequestDto, String image) {
+    public Place(Post post, PlaceRequestDto placeRequestDto) {
         this.content = placeRequestDto.getContent();
         this.address = placeRequestDto.getAddress();
         this.coordinateX = placeRequestDto.getCoordinateX();
         this.coordinateY = placeRequestDto.getCoordinateY();
         this.placeName = placeRequestDto.getPlaceName();
-        this.placeImage = image;
+//        this.placeImage = image;
         this.post = post;
     }
 //    public Place(Post post, PlacePutDto placePutDto, String image) {
@@ -67,13 +67,13 @@ public class Place extends Timestamped {
 //        this.post = post;
 //    }
 
-    public void update(PlaceRequestDto placeRequestDto, Post post, String image) {
+    public void update(PlaceRequestDto placeRequestDto, Post post) {
         this.content = placeRequestDto.getContent();
         this.address = placeRequestDto.getAddress();
         this.coordinateX = placeRequestDto.getCoordinateX();
         this.coordinateY = placeRequestDto.getCoordinateY();
         this.placeName = placeRequestDto.getPlaceName();
-        this.placeImage = image;
+//        this.placeImage = image;
         this.post = post;
     }
 

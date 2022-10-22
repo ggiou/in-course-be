@@ -29,20 +29,20 @@ public class PlaceService {
 
     //카드 생성
     @Transactional
-    public void placeCreate(Long courseId, PlaceRequestDto placeRequestDto, List<String> image)
+    public void placeCreate(Long courseId, PlaceRequestDto placeRequestDto)
             throws IOException
     {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("추천 코스가 존재하지 않습니다.", POST_NOT_EXIST)
         );
-        String placeImage = null;
-        //반복문으로 image리스트에 있는 값을 하나씩 빼서 place에 저장해줌
-        for (int i = 0; i < image.size();) {
-           placeImage = image.get(i);
-           image.remove(i);
-           break;
-        }
-        Place place = new Place(post, placeRequestDto, placeImage);
+//        String placeImage = null;
+//        //반복문으로 image리스트에 있는 값을 하나씩 빼서 place에 저장해줌
+//        for (int i = 0; i < image.size();) {
+//           placeImage = image.get(i);
+//           image.remove(i);
+//           break;
+//        }
+        Place place = new Place(post, placeRequestDto);
         placeRepository.save(place);
     }
 
@@ -58,31 +58,31 @@ public class PlaceService {
 
     //카드 수정
     @Transactional
-    public void placeUpdate(Long courseId, PlaceRequestDto placeRequestDto, List<String> image)throws IOException {
+    public void placeUpdate(Long courseId, PlaceRequestDto placeRequestDto)throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("추천 코스가 존재하지 않습니다.", POST_NOT_EXIST)
         );
         if (placeRequestDto.getPlaceId() == null){
-            placeCreate(courseId, placeRequestDto, image);
+            placeCreate(courseId, placeRequestDto);
         }else{
             Place place = placeRepository.findById(placeRequestDto.getPlaceId()).orElseThrow(() ->
                     new BusinessException("카드가 존재하지 않습니다.", PLACE_NOT_EXIST)
             );
 
-            String imageUrl = place.getPlaceImage();
-            //이미지 존재시 먼저 삭제후 다시 업로드.
-            if (imageUrl != null) {
-                String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
-                s3Uploader.deleteImage(deleteUrl);
-            }
-            String placeImage = null;
-            //반복문으로 image리스트에 있는 값을 하나씩 빼서 place에 저장해줌
-            for (int i = 0; i < image.size();) {
-                placeImage = image.get(i);
-                image.remove(i);
-                break;
-            }
-            place.update(placeRequestDto, post, placeImage);
+//            String imageUrl = place.getPlaceImage();
+//            //이미지 존재시 먼저 삭제후 다시 업로드.
+//            if (imageUrl != null) {
+//                String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
+//                s3Uploader.deleteImage(deleteUrl);
+//            }
+//            String placeImage = null;
+//            //반복문으로 image리스트에 있는 값을 하나씩 빼서 place에 저장해줌
+//            for (int i = 0; i < image.size();) {
+//                placeImage = image.get(i);
+//                image.remove(i);
+//                break;
+//            }
+            place.update(placeRequestDto, post);
         }
 
     }
