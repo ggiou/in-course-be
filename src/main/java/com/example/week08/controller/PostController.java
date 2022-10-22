@@ -63,7 +63,7 @@ public class PostController {
     @PutMapping( "/api/course/{courseId}")
     public ResponseEntity<String> updatePost(@PathVariable Long courseId,
                            @RequestPart(value = "data") @Valid PostPlaceDto requestDto,
-                           @RequestPart(value = "image" ,required = false) @Valid List<MultipartFile> image,
+                           @RequestPart(value = "image" ,required = false) List<MultipartFile> image,
                            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         postService.postUpdate(courseId, requestDto, image, userDetails.getMember());
         return ResponseEntity.ok("게시물 수정 성공");
