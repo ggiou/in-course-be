@@ -111,11 +111,12 @@ public class PostService {
         }
 
         String imageUrl = post.getImage();
-        String postImage = null;
+        String postImage = "";
         List<String> imgPaths = null;
         //이미지가 널값으로 들어오면 기존db에 있던 이미지 경로를 넣어준다
         if (image.get(0).isEmpty()){
-            postImage = imageUrl;
+
+            post.update(postPlaceDto.getPostRequestDto(), imageUrl, member);
         }else {
             //이미지 존재시 먼저 삭제후 다시 업로드.
             if (imageUrl != null) {
@@ -127,7 +128,9 @@ public class PostService {
                 if (i == 0) {
                     postImage = imgPaths.get(i);
                 }
+
         }
+            post.update(postPlaceDto.getPostRequestDto(), postImage, member);
 
 //            List<String> placeImage = new ArrayList<>(1);
 //            //만약 imgPaths의 길이가 0이면
@@ -138,7 +141,7 @@ public class PostService {
 //                }
             }
         
-        post.update(postPlaceDto.getPostRequestDto(), postImage, member);
+//        post.update(postPlaceDto.getPostRequestDto(), postImage, member);
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
 
             PlaceRequestDto place = postPlaceDto.getPlaceRequestDtoList().get(i);
