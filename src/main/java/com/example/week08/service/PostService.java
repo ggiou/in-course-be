@@ -131,8 +131,6 @@ public class PostService {
         } catch(NullPointerException e){
 //            if (image.get(0).isEmpty()) {
             post.update(postPlaceDto.getPostRequestDto(), imageUrl, member);
-        }finally {
-            post.update(postPlaceDto.getPostRequestDto(), imageUrl, member);
         }
 
 
