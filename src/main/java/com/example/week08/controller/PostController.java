@@ -8,7 +8,9 @@ import com.example.week08.dto.request.PostRequestDto;
 import com.example.week08.dto.response.PostResponseDto;
 import com.example.week08.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -96,8 +98,9 @@ public class PostController {
 
     // 코스(게시글) 검색(제목, 내용, 카테고리 검색)
     @GetMapping("/api/course/search")
-    public List<PostResponseDto> search(@RequestParam(value = "keyword") String keyword){
-        return postService.searchPost(keyword);
+    public Slice<PostResponseDto> searchCourse(@RequestParam(value = "keyword") String keyword){
+        PageRequest pageRequest = PageRequest.of(0, 15, Sort.by("id").descending());
+        return postService.searchCourse(keyword, pageRequest);
     }
 
 }
