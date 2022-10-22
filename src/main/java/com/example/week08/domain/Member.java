@@ -62,7 +62,6 @@ public class Member extends Timestamped{
     @PrePersist
     public void prePersist(){
         this.location = this.location == null ? "현재 위치가 지정되어있지 않습니다." : this.location;
-        this.nickname = this.nickname == null ? "현재 닉네임이 지정되어있지 않습니다." : this.nickname;
         this.nickname = this.nickname == null ? UUID.randomUUID().toString() : this.nickname;
     }
 
