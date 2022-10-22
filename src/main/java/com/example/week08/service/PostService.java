@@ -123,21 +123,20 @@ public class PostService {
                 s3Uploader.deleteImage(deleteUrl);
             }
             imgPaths = s3Uploader.uploadList(image);
-
+            for (int i = 0; i < imgPaths.size(); i++) {
+                if (i == 0) {
+                    postImage = imgPaths.get(i);
+                }
         }
-
-        System.out.println("IMG 경로들 : " + imgPaths);
 
 //            List<String> placeImage = new ArrayList<>(1);
 //            //만약 imgPaths의 길이가 0이면
-//            for (int i = 0; i < imgPaths.size(); i++) {
-//                if (i == 0) {
-//                    postImage = imgPaths.get(i);
-//                } else {
+
+//                else {
 //                    placeImage.add(i - 1, imgPaths.get(i));
 //
 //                }
-//            }
+            }
         
         post.update(postPlaceDto.getPostRequestDto(), postImage, member);
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
