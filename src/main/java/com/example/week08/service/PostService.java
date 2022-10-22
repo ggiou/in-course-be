@@ -9,6 +9,8 @@ import com.example.week08.repository.*;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -94,11 +96,8 @@ public class PostService {
 
     // 코스(게시글) 검색(제목, 내용, 카테고리 검색)
     @Transactional
-    public List<PostResponseDto> searchPost(String keyword){
-        return postRepository.findAllSearch(keyword)
-                .stream()
-                .map(PostResponseDto::new)
-                .collect(Collectors.toList());
+    public Slice<PostResponseDto> searchCourse(String keyword, Pageable pageable){
+        return postRepository.findAllSearch(keyword, pageable);
     }
 
     // 코스 게시글 수정(카드 이미지 통합)
