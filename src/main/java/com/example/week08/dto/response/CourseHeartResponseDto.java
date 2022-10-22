@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -22,10 +23,23 @@ public class CourseHeartResponseDto {
     private String myNickname;
     private Long courseId;
     private String title;
+    private String content;
+    private String image;
+    private String weather;
+    private String region;
+    private String season;
+    private String who;
+    private List<Place> place;
+    private Long writerId;
     private String writerNickname;
+    private String profileImage;
+    private String location;
+    private String badge;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
+
     private double avgScore;
     private int sumHeart;
-
 //    private Post post;
 
     public CourseHeartResponseDto(Member member) {
@@ -38,13 +52,26 @@ public class CourseHeartResponseDto {
     public CourseHeartResponseDto(CourseHeart courseHeart) {
         this.message = "내가 찜한 course";
         this.heart = true;
-        this.myNickname = courseHeart.getMember().getNickname();
         this.memberId = courseHeart.getMember().getId();
+        this.myNickname = courseHeart.getMember().getNickname();
         this.courseId = courseHeart.getPost().getId();
         this.title = courseHeart.getPost().getTitle();
-        this.writerNickname = courseHeart.getPost().getMember().getNickname();
+        this.content = courseHeart.getPost().getContent();
+        this.image = courseHeart.getPost().getImage();
+        this.weather = courseHeart.getPost().getWeather();
+        this.region = courseHeart.getPost().getRegion();
+        this.season = courseHeart.getPost().getSeason();
+        this.who = courseHeart.getPost().getWho();
         this.avgScore = courseHeart.getPost().getAvgScore();
         this.sumHeart = courseHeart.getPost().getHeart();
+        this.place = courseHeart.getPost().getPlace();
+        this.writerId = courseHeart.getMember().getId();
+        this.writerNickname = courseHeart.getPost().getMember().getNickname();
+        this.profileImage = courseHeart.getMember().getProfileImage();
+        this.location = courseHeart.getMember().getLocation();
+        this.badge = courseHeart.getMember().getBadge();
+        this.createdAt = courseHeart.getPost().getCreatedAt();
+        this.modifiedAt = courseHeart.getPost().getModifiedAt();
     }
 
 }
