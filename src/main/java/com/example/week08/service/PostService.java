@@ -8,7 +8,6 @@ import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.*;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -68,19 +67,9 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
-//    // 코스(게시글) 전체 조회
-//    @Transactional(readOnly = true)
-//    public List<PostResponseDto> getAllPost() {
-//        return postRepository.findAllByOrderByModifiedAtDesc()
-//                .stream()
-//                .map(PostResponseDto::new)
-//                .collect(Collectors.toList());
-//    }
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
     public List<PostResponseDto> getAllPost(Model model, Pageable pageable) {
-//        Page<Post> postPage;
-//        postPage = postRepository.findAll(pageable);
         List<PostResponseDto> ResponsePage = postRepository.findAllByOrderByModifiedAtDesc(pageable)
                 .stream()
                 .map(PostResponseDto::new)
@@ -152,22 +141,33 @@ public class PostService {
 
     // 코스(게시글) 삭제(카드이미지 삭제 통합)
     @Transactional
-    public void postDelete(Long courseId, PlaceDeleteDto placeDeleteDto, Member member) throws IOException {
+    public void postDelete(Long courseId, Member member) throws IOException {
+        List<Place> placeList = placeRepository.findAll();
+        List<Long> placeIdList = new ArrayList<Long>();
+        for (int i = 0; i < placeList.size(); i++) {
+            if (placeList.get(i).getPost().getId().equals(courseId)) {
+                Long placeId = placeList.get(i).getId();
+                placeIdList.add(placeId);
+            }
+        }
+
+
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         if (!post.getMember().getId().equals(member.getId())) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
-        for (int i = 0; i < placeDeleteDto.getPlaceId().size(); i++) {
-            Place place = placeRepository.findById(placeDeleteDto.getPlaceId().get(i)).orElseThrow(() ->
+        for (int i = 0; i < placeIdList.size(); i++) {
+            Place place = placeRepository.findById(placeIdList.get(i)).orElseThrow(() ->
                     new BusinessException("카드가 존재하지 않습니다.", ErrorCode.PLACE_NOT_EXIST)
             );
             String imageUrlPlace = place.getPlaceImage();
             if (imageUrlPlace != null) {
                 String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
                 s3Uploader.deleteImage(deleteUrl);
-                placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+                placeRepository.deleteById(placeIdList.get(i));
+                placeHeartRepository.deleteById(placeIdList.get(i));
             }
         }
 
@@ -178,7 +178,6 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
-//        courseHeartRepository.deleteById(courseId);
     }
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)

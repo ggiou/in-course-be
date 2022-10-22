@@ -142,8 +142,12 @@ public class MyPageService {
             System.out.println(newPassword + "\n" + passwordConfirm + "                 비밀번호 변경 할 때\n\n");
         } //수정 때, 비밀번호를 어쨌든 암호화 해줘야 함
 
+        String gender = profileRequestDto.getGender();
+        if (gender == null || gender.isEmpty()) {
+            gender = member.getGender();
+        }
 
-        member.update(nickname, location, newPassword, imageUrl);
+        member.update(nickname, location, newPassword, imageUrl, gender);
         memberRepository.save(member);
 
         return new ProfileResponseDto(member);
@@ -164,18 +168,18 @@ public class MyPageService {
                 sumHeart += posts.getHeart();
             }
 
-            if (sumHeart >= 0 && sumHeart < 10) {
+            if (sumHeart == 0) {
                 badge = "아싸";
-            } else if (sumHeart >= 10 && sumHeart < 30) {
+            } else if (sumHeart >= 1 && sumHeart < 3) {
                 badge = "자발적 아싸";
-            } else if (sumHeart >= 30 && sumHeart < 60) {
+            } else if (sumHeart >= 3 && sumHeart < 7) {
                 badge = "흔남흔녀";
-            } else if (sumHeart >= 60 && sumHeart < 100) {
+            } else if (sumHeart >= 7 && sumHeart < 10) {
                 badge = "인싸";
             } else {
                 badge = "핵인싸";
             }
-
+            members.setHeartSum(sumHeart);
             members.badgeupdate(badge);
                  }
     return badge;

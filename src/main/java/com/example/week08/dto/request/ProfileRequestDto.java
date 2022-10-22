@@ -25,4 +25,6 @@ public class ProfileRequestDto {
     private String location;
 
     private MultipartFile image;
+
+    private String gender;
 }
