@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaceRequestDto {
-
+    private Long placeId;
     private String content;
     private String address;
     private String coordinateX;

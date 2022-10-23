@@ -25,6 +25,7 @@ public class ClothesSuppliesRecommendService {
     private final String[]sfHat={"없음", "없음", "없음", "없음","벙거지 모자", "베레모", "볼 캡" }; //봄, 가을
     private final String[]summerHat={"없음", "없음", "없음", "없음","볼 캡", "밀짚 모자_w"};//여름
     private final String[]winterHat={"없음", "없음", "없음", "없음","비니", "볼 캡", "방울 모자"};//겨울
+//    비니 볼캡 스냅백 썬캡 버킷햇 중절모 갓 군밤모자
 
     //계절별 모자
 

@@ -1,19 +1,19 @@
 package com.example.week08.service;
 
-import com.example.week08.domain.Member;
-import com.example.week08.domain.OpenWeatherData;
-import com.example.week08.domain.Place;
-import com.example.week08.domain.Post;
+import com.example.week08.domain.*;
 import com.example.week08.dto.request.*;
 import com.example.week08.dto.response.PostResponseDto;
-import com.example.week08.dto.response.PostResponseGetDto;
 import com.example.week08.errorhandler.BusinessException;
 import com.example.week08.errorhandler.ErrorCode;
 import com.example.week08.repository.*;
 import com.example.week08.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,10 +30,12 @@ public class PostService {
     private final PlaceService placeService;
     private final PlaceRepository placeRepository;
     private final OpenWeatherDataRepository openWeatherDataRepository;
-    private final HeartRepository heartRepository;
+    private final CourseHeartRepository courseHeartRepository;
+    private final PlaceHeartRepository placeHeartRepository;
+
     // 코스 게시글 작성(카드 이미지 통합)
     @Transactional
-    public Post postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
+    public void postCreate(PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member)throws IOException {
         List<String> imgPaths  = s3Uploader.uploadList(image);
         System.out.println("IMG 경로들 : " + imgPaths);
         //uploadList에서 받은 이미지 경로 리스트를 하나씩 빼서 첫번째는 post에 나머지는 place에 하나씩 할당해줘야함
@@ -49,13 +51,11 @@ public class PostService {
                 }
             }
 
-
         Post post = new Post(postPlaceDto.getPostRequestDto(), postImage, member);
         Long courseId = postRepository.save(post).getId();
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
-            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i), placeImage);
+            placeService.placeCreate(courseId, postPlaceDto.getPlaceRequestDtoList().get(i));
         }
-        return post;
         }
 
     // 코스(게시글) 단건 조회
@@ -69,11 +69,14 @@ public class PostService {
 
     // 코스(게시글) 전체 조회
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAllPost() {
-        return postRepository.findAllByOrderByModifiedAtDesc()
+    public List<PostResponseDto> getAllPost(Model model, Pageable pageable) {
+        List<PostResponseDto> ResponsePage = postRepository.findAllByOrderByModifiedAtDesc(pageable)
                 .stream()
                 .map(PostResponseDto::new)
                 .collect(Collectors.toList());
+        model.addAttribute("postPage", ResponsePage);
+
+        return ResponsePage;
     }
 
     // 코스(게시글) 카테고리 조회
@@ -93,16 +96,13 @@ public class PostService {
 
     // 코스(게시글) 검색(제목, 내용, 카테고리 검색)
     @Transactional
-    public List<PostResponseDto> searchPost(String keyword){
-        return postRepository.findAllSearch(keyword)
-                .stream()
-                .map(PostResponseDto::new)
-                .collect(Collectors.toList());
+    public Slice<PostResponseDto> searchCourse(String keyword, Pageable pageable){
+        return postRepository.findAllSearch(keyword, pageable);
     }
 
     // 코스 게시글 수정(카드 이미지 통합)
     @Transactional
-    public Post postUpdate(Long courseId, PostPlacePutDto postPlacePutDto, List<MultipartFile> image, Member member) throws IOException {
+    public void postUpdate(Long courseId, PostPlaceDto postPlaceDto, List<MultipartFile> image, Member member) throws IOException {
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
@@ -111,53 +111,76 @@ public class PostService {
         }
 
         String imageUrl = post.getImage();
-        //이미지 존재시 먼저 삭제후 다시 업로드.
-        if (imageUrl != null) {
-            String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
-            s3Uploader.deleteImage(deleteUrl);
-        }
-        List<String> imgPaths  = s3Uploader.uploadList(image);
-        System.out.println("IMG 경로들 : " + imgPaths);
+        String postImage = "";
+        List<String> imgPaths = null;
+        //이미지가 널값으로 들어오면 기존db에 있던 이미지 경로를 넣어준다
 
-        String postImage = null;
-        List<String> placeImage = new ArrayList<>(1);
-        //만약 imgPaths의 길이가 0이면
-        for (int i = 0; i < imgPaths.size(); i++) {
-            if (i == 0) {
-                postImage = imgPaths.get(i);
-            }else{
-                placeImage.add(i-1, imgPaths.get(i));
-
+        try{
+            //이미지 존재시 먼저 삭제후 다시 업로드.
+            if (imageUrl != null) {
+                String deleteUrl = imageUrl.substring(imageUrl.indexOf("/post/image"));
+                s3Uploader.deleteImage(deleteUrl);
             }
+            imgPaths = s3Uploader.uploadList(image);
+            for (int i = 0; i < imgPaths.size(); i++) {
+                if (i == 0) {
+                    postImage = imgPaths.get(i);
+                }
+            }
+            post.update(postPlaceDto.getPostRequestDto(), postImage, member);
+        } catch(NullPointerException e){
+//            if (image.get(0).isEmpty()) {
+            post.update(postPlaceDto.getPostRequestDto(), imageUrl, member);
         }
-        post.update(postPlacePutDto.getPostRequestDto(), postImage, member);
-        for (int i =0; i <postPlacePutDto.getPlacePutDtoList().size(); i++){
 
-            PlacePutDto place = postPlacePutDto.getPlacePutDtoList().get(i);
-            placeService.placeUpdate(courseId, place, placeImage);
+
+//            List<String> placeImage = new ArrayList<>(1);
+//            //만약 imgPaths의 길이가 0이면
+
+//                else {
+//                    placeImage.add(i - 1, imgPaths.get(i));
+//
+//                }
+
+        
+//        post.update(postPlaceDto.getPostRequestDto(), postImage, member);
+        for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
+
+            PlaceRequestDto place = postPlaceDto.getPlaceRequestDtoList().get(i);
+            placeService.placeUpdate(courseId, place);
         }
 
-        return post;
     }
 
     // 코스(게시글) 삭제(카드이미지 삭제 통합)
     @Transactional
-    public void postDelete(Long courseId, PlaceDeleteDto placeDeleteDto , Member member) throws IOException {
+    public void postDelete(Long courseId, Member member) throws IOException {
+        List<Place> placeList = placeRepository.findAll();
+        List<Long> placeIdList = new ArrayList<Long>();
+        for (int i = 0; i < placeList.size(); i++) {
+            if (placeList.get(i).getPost().getId().equals(courseId)) {
+                Long placeId = placeList.get(i).getId();
+                placeIdList.add(placeId);
+            }
+        }
+
+
         Post post = postRepository.findById(courseId).orElseThrow(
                 () -> new BusinessException("존재하지 않는 게시글 id 입니다.", ErrorCode.POST_NOT_EXIST)
         );
         if (!post.getMember().getId().equals(member.getId())) {
             throw new IllegalArgumentException("삭제 권한이 없습니다.");
         }
-        for (int i = 0; i < placeDeleteDto.getPlaceId().size(); i++) {
-            Place place = placeRepository.findById(placeDeleteDto.getPlaceId().get(i)).orElseThrow(() ->
+        for (int i = 0; i < placeIdList.size(); i++) {
+            Place place = placeRepository.findById(placeIdList.get(i)).orElseThrow(() ->
                     new BusinessException("카드가 존재하지 않습니다.", ErrorCode.PLACE_NOT_EXIST)
             );
             String imageUrlPlace = place.getPlaceImage();
             if (imageUrlPlace != null) {
                 String deleteUrl = imageUrlPlace.substring(imageUrlPlace.indexOf("/post/image"));
                 s3Uploader.deleteImage(deleteUrl);
-                placeRepository.deleteById(placeDeleteDto.getPlaceId().get(i));
+                placeRepository.deleteById(placeIdList.get(i));
+                placeHeartRepository.deleteById(placeIdList.get(i));
             }
         }
 
@@ -168,12 +191,11 @@ public class PostService {
         }
 
         postRepository.deleteById(courseId);
-        heartRepository.deleteAllByPostId(courseId);
     }
 
     // 메인 새로운게시물/날씨/지역/계절/평점 기반 (회원용)
     @Transactional(readOnly = true)
-    public Optional<PostResponseGetDto> getRecommended(Member member) {
+    public Optional<PostResponseDto> getRecommended(Member member) {
 
         Optional<OpenWeatherData> openWeatherData = openWeatherDataRepository.findByMember(member);
         Map<String, Object> searchKeys = new HashMap<>();
@@ -184,24 +206,24 @@ public class PostService {
             searchKeys.put("region", regionChange(openWeatherData.get().getRegion()));//지역
         if (openWeatherData.get().getSeason() != null) searchKeys.put("season", openWeatherData.get().getSeason());//계절
 
-        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingInt(PostResponseGetDto::getAvgScore);
+        Comparator<PostResponseDto> scoreComparator = Comparator.comparingDouble(PostResponseDto::getAvgScore);
 
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
-                .map(PostResponseGetDto::new)
+                .map(PostResponseDto::new)
                 .collect(Collectors.maxBy(scoreComparator));
     }
     //메인 비로그인 유저용 새로운게시물/ 평점기반
     @Transactional(readOnly = true)
-    public Optional<PostResponseGetDto> getCommonRecommended() {
+    public Optional<PostResponseDto> getCommonRecommended() {
 
         Map<String, Object> searchKeys = new HashMap<>();
         searchKeys.put("newPost", true); //새로운 게시물
 
-        Comparator<PostResponseGetDto> scoreComparator = Comparator.comparingInt(PostResponseGetDto::getAvgScore);
+        Comparator<PostResponseDto> scoreComparator = Comparator.comparingDouble(PostResponseDto::getAvgScore);
         return postRepository.findAll(PostSpecification.searchPost(searchKeys))
                 .stream()
-                .map(PostResponseGetDto::new)
+                .map(PostResponseDto::new)
                 .collect(Collectors.maxBy(scoreComparator));
     }
 
@@ -209,47 +231,38 @@ public class PostService {
     @Transactional
     public String regionChange(String region){
 
-        String[] capital = {"Seoul","Seŏul","Incheon","Incheŏn","Suwon","Suwŏn","Yongin","Yŏngin","Seongnam","Seŏngnam",
-                "Bucheon","Bucheŏn","Hwaseong","Hwaseŏng","Ansan","Anyang","Pyeongtaek","Pyeŏngtaek","Siheung","Gimpo",
-                "Gimpŏ","Gwangju","Gwangmyeong","Gwangmyeŏng","Gunpo","Gunpŏ","Hanam","Osan","Ŏsan","Icheon","Icheŏn",
-                "Anseong","Anseŏng","Uiwang","Yangpyeong","Yangpyeŏng","Yeoju","Yeŏju","Gwacheon","Gwacheŏn","Goyang","Gŏyang",
-                "Namyangju","Paju","Uijeongbu","Uijeŏngbu","Yangju","Guri","Pocheon","Pŏcheon","Dongducheon","Dŏngducheŏn",
-                "Gapyeong","Gapyeŏng","Yeoncheon","Yeŏncheŏn"};
-
-        String[] gangwon = {"Chuncheon","Chuncheŏn","Wonju","Wŏnju","Gangneung","Donghae","Dŏnghae","Taebaek","Sokcho","Sŏkchŏ",
-                "Samcheok","Samcheŏk","Hongcheon","Hŏngcheŏn","Hoengseong","Hŏengseŏng","Yeongwol","Yeŏngwŏl","Pyeongchang",
-                "Pyeŏngchang","Jeongseon","Jeŏngseŏn","Cheorwon","Cheŏrwŏn","Hwacheon","Hwacheŏn","Yanggu","Inje","Goseong",
-                "Gŏseŏng","Yangyang","Okcheon","Ŏkcheŏn"};
-
-        String[] chungbuk = {"Cheongju","Cheŏngju","Chungju","Jecheon","Jecheŏn","Boeun","Bŏeun","Okcheon","Ŏkcheŏn",
-                "Yeongdong","Yeŏngdŏng","Jeungpyeong","Jeungpyeŏng","Jincheon","Jincheŏn","Goesan","Gŏesan","Eumseong",
-                "Eumseŏng","Danyang"};
-
-        String[] chungnam = {"Daejeon","Daejeŏn","Sejong","Sejŏng","Cheonan","Cheŏnan","Gyeongsan","Gyeŏngsan","Gongju",
-                "Gŏngju","Boryeong","Bŏryeong","Asan","Seosan","Seŏsan","Nonsan","Nŏnsan","Gyeryong","Gyeryŏng","Dangjin",
-                "Geumsan","Buyeo","Buyeŏ","Seocheon","Seŏcheon","Cheongyang","Cheŏngyang","Hongseong","Hŏngseŏng","Yesan",
-                "Taean"};
-
-        String[] jeonbuk = {"Jeonju","Jeŏnju","Gunsan","Iksan","Jeongeup","Jeŏngeup","Namwon","Namwŏn","Gimje","Wanju",
-                "Jinan","Muju","Jangsu","Imsil","Sunchang","Gochang","Gŏchang","Buan"};
-
-        String[] jeonnam = {"Gwangju","Mokpo","Mŏkpŏ","Yeosu","Yeŏsu","Suncheon","Suncheŏn","Naju","Gwangyang","Damyang",
-                "Gokseong","Gŏkseŏng","Gurye","Goheung","Gŏheung","Gurye","Boseong","Bŏseŏng","Hwasun","Jangheung",
-                "Gangjin","Haenam","Yeongam","Yeŏngam","Muan","Hampyeong","Hampyeŏng","Yeonggwang","Yeŏnggwang",
-                "Jangseong","Jangseŏng","Wando","Wandŏ","Jindo","Jindŏ","Shinan"};
-
-        String[] gyeongbuk = {"Daegu","Pohang","Pŏhang","Gyeongju","Gyeŏngju","Gimcheon","Gimcheŏn","Andong","Andŏng",
-                "Gumi","Yeongju","Yeŏngju","Yeongcheon","Yeŏngcheŏn","Sangju","Mungyeong","Mungyeŏng","Gyeongsan","Gyeŏngsan",
-                "Gunwi","Uiseong","Uiseŏng","Cheongsong","Cheŏngsŏng","Yeongyang","Yeŏngyang","Yeongdeok","Yeŏngdeŏk",
-                "Cheongdo","Cheŏngdŏ","Goryeong","Gŏryeŏng","Seongju","Seŏngju","Chilgok","Chilgŏk","Yecheon","Yecheŏn",
-                "Bonghwa","Bŏnghwa","Uljin","Ulleung"};
-
-        String[] gyeongnam = {"Busan","Ulsan","Changwon","Changwŏn","Gimhae","Yangsan","Jinju","Geoje","Geŏje","Tongyeong",
-                "Tŏngyeŏng","Sacheon","Sacheŏn","Miryang","Haman","Changnyeong","Changnyeŏng","Geochang","Geŏchang",
-                "Goseong","Gŏseong","Hadong","Hadŏng","Hapcheon","Hapcheŏn","Namhae","Hamyang","Sancheong","Sancheŏng",
-                "Uiryeong","Uiryeŏng"};
-
-        String[] jeju = {"Jeju","Seogwipo","Seŏgwipŏ"};
+        //수도권
+        String[] capital = {"Yongin","Yeoncheon-gun","Yeoju","Yangp'yŏng","Yangju","Yach’on","Umulmok","Uijeongbu-si",
+                "Suwon","Republic of Korea","Seoul","Yongsan","Sinch’ŏn-dong","Sangok","Pyeongtaek","Pyeong","Bucheon-si",
+                "Osan","Namyang","Namp’o-ri","Munsan","Paju","Gyeonggi-do","Gwacheon","Guri-si","Gunpo","Goyang-si",
+                "Gimpo-si","Gapyeong","Ganghwa-gun","Incheon","Icheon-si","Hwaseong-si","Hwapyeongri","Kulgwan-dong",
+                "Jungpyong","Chuja-ri","Jamwon-dong","Anyang-si","Anseong","Ansan-si"};
+        //강원
+        String[] gangwon = {"Neietsu","Yangyang","Yanggu","Wŏnju","T’aebaek","Sokcho","Santyoku","Kosong","Goseong",
+                "Gangwon-do","Gangneung","Inje","Hwacheon","Hongch’ŏn","Chuncheon"};
+        //충북
+        String[] chungbuk = {"Yeongdong","Okcheon","Koesan","Ipyang-ni","Chungju","Chungcheongbuk-do","Cheongju-si",
+                "Chinch'ŏn","Teisen"};
+        //충남
+        String[] chungnam = {"Yesan","Tangjin","Taesal-li","Daejeon","Boryeong","Taian","Seosan","Seonghwan","Buyeo","Asan",
+                "Nonsan","Kinzan","Gongju","Hongseong","Chungcheongnam-do","Cheonan","Janggol"};
+        //전북
+        String[] jeonbuk = {"Wanju","Sunchang-chodeunghakgyo","Puan","Nangen","Muju","Gunsan","Koch'ang","Kimje","Iksan",
+                "Imsil","Jeonju","Jeollabuk-do","Jinan-gun","Changsu"};
+        //전남
+        String[] jeonnam = {"Tokusan-ri","Reisui","Yeonggwang","Yeongam-guncheong","Suncheon","Boseong","Beolgyo","Naju",
+                "Muan","Mokpo","Kwangyang","Gwangju","Kurye","Koyo","Hwasun","Hampyeongsaengtaegongwon","Haenam",
+                "Jeollanam-do"};
+        //경북
+        String[] gyeongbuk = {"Heunghae","Yeonil","Eisen","Yecheon","Waegwan","Unsal-li","Ulchin","Daegu","Jenzan",
+                "Sangju","Pohang","Mungyeong","Gyeongsangbuk-do","Gyeongsan-si","Gyeongju","Kuwaegwan","Kunwi","Gumi",
+                "Koryŏng","Gimcheon","Ipseokdong","Hŭngjŏn","Hayang","Cheongsong gun","Ch’ŏngnim","Shitsukoku","Changp’o",
+                "Andong"};
+        //경남
+        String[] gyeongnam = {"Yangsan","Ulsan","Seisan-ri","Songjeong","Sang-ni","Shisen","Busan","Namhae","Miryang",
+                "Masan","Kyosai","Kimhae","Gijang","Hamyang","Hadong-eup Samuso","Chinju","Chinhae","Changwon"};
+        //제주
+        String[] jeju = {"Jeju-do","Jeju City","Gaigeturi"};
 
         String answer = null;
         for (int i = 0; i < capital.length; i++) {

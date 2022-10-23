@@ -21,6 +21,8 @@ public class ProfileResponseDto {
 
     private String naverId;
     private Long kakaoId;
+    private String badge;
+    private int heartSum;
 
     public ProfileResponseDto(Member member){
         this.id = member.getId();
@@ -32,5 +34,7 @@ public class ProfileResponseDto {
         this.password = member.getPassword();
         this.naverId = member.getNaverId();
         this.kakaoId = member.getKakaoId();
+        this.badge = member.getBadge();
+        this.heartSum = member.getHeartSum();
     }
 }

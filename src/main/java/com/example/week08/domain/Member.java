@@ -7,7 +7,9 @@ import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import javax.validation.constraints.NotNull;
 
 @Builder
@@ -23,7 +25,9 @@ public class Member extends Timestamped{
     private Long id;
     @NotNull
     private String email;
-    @Column
+
+    @NotNull
+    @Column(unique = true)
     private String nickname;
 
     @Column
@@ -42,13 +46,23 @@ public class Member extends Timestamped{
     private String naverId;
     @NotNull
     private int emailAuth;
+    @Column
+    private String badge;
+    @Column
+    private int heartSum;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "Member_id")
+    private List<CourseHeart> courseHeart;
+
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "Member_id")
+//    private List<Post> post;
 
     @PrePersist
     public void prePersist(){
         this.location = this.location == null ? "현재 위치가 지정되어있지 않습니다." : this.location;
-        this.nickname = this.nickname == null ? "현재 닉네임이 지정되어있지 않습니다." : this.nickname;
-        this.gender = this.gender == null ? "현재 성별이 지정되어있지 않습니다." : this.gender;
+        this.nickname = this.nickname == null ? UUID.randomUUID().toString() : this.nickname;
     }
 
     @Override
@@ -70,6 +84,9 @@ public class Member extends Timestamped{
         this.password = newPassword;
         this.profileImage = imageUrl;
         this.gender = gender;
+    }
+    public void badgeupdate(String badge){
+        this.badge = badge;
     }
 
     public void detialSignup(String nickname, String location, String gender){

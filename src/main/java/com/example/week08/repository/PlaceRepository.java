@@ -10,6 +10,4 @@ import java.util.List;
 @Repository
 public interface PlaceRepository extends JpaRepository<Place,Long> {
 
-//    List<Place> findAllByPostId(Long postId);
-    List<Place> findByPostId(Long courseId);
 }
