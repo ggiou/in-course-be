@@ -129,21 +129,9 @@ public class PostService {
             }
             post.update(postPlaceDto.getPostRequestDto(), postImage, member);
         } catch(NullPointerException e){
-//            if (image.get(0).isEmpty()) {
             post.update(postPlaceDto.getPostRequestDto(), imageUrl, member);
         }
 
-
-//            List<String> placeImage = new ArrayList<>(1);
-//            //만약 imgPaths의 길이가 0이면
-
-//                else {
-//                    placeImage.add(i - 1, imgPaths.get(i));
-//
-//                }
-
-        
-//        post.update(postPlaceDto.getPostRequestDto(), postImage, member);
         for (int i =0; i <postPlaceDto.getPlaceRequestDtoList().size(); i++){
 
             PlaceRequestDto place = postPlaceDto.getPlaceRequestDtoList().get(i);
