@@ -21,7 +21,7 @@ public class CourseHeartResponseDto {
     private boolean heart;
     private Long memberId;
     private String myNickname;
-    private Long courseId;
+    private Long postId;
     private String title;
     private String content;
     private String image;
@@ -54,7 +54,7 @@ public class CourseHeartResponseDto {
         this.heart = true;
         this.memberId = courseHeart.getMember().getId();
         this.myNickname = courseHeart.getMember().getNickname();
-        this.courseId = courseHeart.getPost().getId();
+        this.postId = courseHeart.getPost().getId();
         this.title = courseHeart.getPost().getTitle();
         this.content = courseHeart.getPost().getContent();
         this.image = courseHeart.getPost().getImage();
