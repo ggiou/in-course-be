@@ -21,7 +21,7 @@ public class CourseHeartResponseDto {
     private boolean heart;
     private Long memberId;
     private String myNickname;
-    private Long postId;
+    private Long id;
     private String title;
     private String content;
     private String image;
@@ -31,7 +31,7 @@ public class CourseHeartResponseDto {
     private String who;
     private List<Place> place;
     private Long writerId;
-    private String writerNickname;
+    private String nickname;
     private String profileImage;
     private String location;
     private String badge;
@@ -54,7 +54,7 @@ public class CourseHeartResponseDto {
         this.heart = true;
         this.memberId = courseHeart.getMember().getId();
         this.myNickname = courseHeart.getMember().getNickname();
-        this.postId = courseHeart.getPost().getId();
+        this.id = courseHeart.getPost().getId();
         this.title = courseHeart.getPost().getTitle();
         this.content = courseHeart.getPost().getContent();
         this.image = courseHeart.getPost().getImage();
@@ -66,7 +66,7 @@ public class CourseHeartResponseDto {
         this.sumHeart = courseHeart.getPost().getHeart();
         this.place = courseHeart.getPost().getPlace();
         this.writerId = courseHeart.getMember().getId();
-        this.writerNickname = courseHeart.getPost().getMember().getNickname();
+        this.nickname = courseHeart.getPost().getMember().getNickname();
         this.profileImage = courseHeart.getMember().getProfileImage();
         this.location = courseHeart.getMember().getLocation();
         this.badge = courseHeart.getMember().getBadge();
