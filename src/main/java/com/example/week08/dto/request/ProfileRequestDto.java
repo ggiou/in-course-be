@@ -20,8 +20,6 @@ public class ProfileRequestDto {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,20}$", message = "비밀번호는 최소 8글자 이상 20자 이하며 하나의 대소문자와 숫자가 포함되야 합니다.")
     private String password;
 
-    private String passwordConfirm;
-
     private String location;
 
     private MultipartFile image;

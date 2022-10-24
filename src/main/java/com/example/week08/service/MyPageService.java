@@ -124,22 +124,12 @@ public class MyPageService {
         }
 
         String newPassword;
-        String passwordConfirm;
         String newPasswords = profileRequestDto.getPassword();
-        String passwordConfirms = profileRequestDto.getPasswordConfirm();
         if (newPasswords == null || newPasswords.isEmpty()) {
             newPassword = member.getPassword();
-            passwordConfirm = newPassword;
-            System.out.println(newPassword + "\n" + passwordConfirm + "                   비었을 떄\n\n");
-        } //수정 때, 새 비밀번호 입력 안 할시 기존 비밀번호 가져와서, confirm도 설정
+        } //수정 때, 새 비밀번호 입력 안 할시 기존 비밀번호 가져옴
         else {
-            newPassword = newPasswords;
-            passwordConfirm = passwordConfirms;
-            if (!Objects.equals(newPassword, passwordConfirm)) {
-                throw new BusinessException(ErrorCode.PASSWORDS_NOT_MATCHED);
-            }
             newPassword = passwordEncoder.encode(newPasswords);
-            System.out.println(newPassword + "\n" + passwordConfirm + "                 비밀번호 변경 할 때\n\n");
         } //수정 때, 비밀번호를 어쨌든 암호화 해줘야 함
 
         String gender = profileRequestDto.getGender();
