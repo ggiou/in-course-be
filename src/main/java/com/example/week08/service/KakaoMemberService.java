@@ -116,10 +116,11 @@ public class KakaoMemberService {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("kakao_account").get("profile").get("nickname").asText();
+        String gender = jsonNode.get("kakao_account").get("gender").asText();
         String email = jsonNode.get("kakao_account").get("email").asText();
         String image = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
         log.info("카카오 사용자 정보: id -> " + id + ", nickname -> " + nickname+ ", email -> " +email+", profile -> " +image );
-        return new KakaoMemberInfoDto(id, nickname, email, image);
+        return new KakaoMemberInfoDto(id, nickname, email, image, gender);
     }
 
     private Member registerKakaoUserIfNeeded(KakaoMemberInfoDto kakaoMemberInfo) {
@@ -143,6 +144,13 @@ public class KakaoMemberService {
             if (optionalEmail.isPresent()){
                 throw new BusinessException("이미 가입된 이메일 입니다. 카카오 로그인 대신 다른 로그인을 해주세요.",DUPLICATED_USER_EMAIL);
             }
+            String gender = kakaoMemberInfo.getGender();
+            if(gender.contains("fe")){
+                gender="여성";
+            }else {
+                gender = "남성";
+            }
+
             //image : kakao image
             String image = kakaoMemberInfo.getImage(); // 이미지가 s3에 저장이 안 된 상태니..
             // password: random UUID
@@ -152,6 +160,7 @@ public class KakaoMemberService {
             kakaoUser = Member.builder()
                     .email(email)
                     .nickname(nickname)
+                    .gender(gender)
                     .password(encodedPassword)
                     .profileImage(image)
                     .kakaoId(kakaoId)
@@ -172,7 +181,7 @@ public class KakaoMemberService {
     private TokenDto kakaoUsersAuthorizationInput(Member kakaouser, HttpServletResponse response) {
         // response header에 token 추가
         TokenDto token = tokenProvider.generateTokenDto(kakaouser);
-        response.addHeader("Authorization", "Bearer" + " " + token.getAccessToken());
+        response.addHeader("Authorization", "BEARER" + " " + token.getAccessToken());
         response.addHeader("RefreshToken", token.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", token.getAccessTokenExpiresIn().toString());
         response.addHeader("User-email", kakaouser.getEmail());
