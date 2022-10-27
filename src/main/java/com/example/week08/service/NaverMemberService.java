@@ -115,14 +115,14 @@ public class NaverMemberService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         String naverId = jsonNode.get("response").get("id").asText();
-
+        String gender = jsonNode.get("response").get("gender").asText();
         String nickname = jsonNode.get("response").get("name").asText();
 
 
         String email = jsonNode.get("response").get("email").asText();
         String image = jsonNode.get("response").get("profile_image").asText();
         log.info("네이버 사용자 정보: id -> " + naverId + ", nickname -> " + nickname+ ", email -> " +email+", profile -> " +image );
-        return new NaverMemberInfoDto(email, nickname, naverId, image);
+        return new NaverMemberInfoDto(email, gender, nickname, naverId, image);
     }
 
     private Member registerNaverUserIfNeeded(NaverMemberInfoDto naverMemberInfo) {
@@ -142,7 +142,15 @@ public class NaverMemberService {
             if (optionalEmail.isPresent()){
                 throw new BusinessException("이미 가입된 이메일 입니다. 네이버 로그인 대신 다른 로그인을 해주세요.",DUPLICATED_USER_EMAIL);
             }
-
+            String gender = naverMemberInfo.getGender();
+            if(gender.contains("F")){
+                gender="여성";
+            }else if(gender.contains("M")){
+                gender="남성";
+            }else {
+                gender="남성";
+            }
+            System.out.println(gender+"  성별\n\n");
             String image = naverMemberInfo.getImage(); // 이미지가 s3에 저장이 안 된 상태니..
             // password: random UUID
             String password = UUID.randomUUID().toString();
@@ -151,6 +159,7 @@ public class NaverMemberService {
             naverUser = Member.builder()
                     .email(email)
                     .nickname(nickname)
+                    .gender(gender)
                     .password(encodedPassword)
                     .profileImage(image)
                     .naverId(naverId)
