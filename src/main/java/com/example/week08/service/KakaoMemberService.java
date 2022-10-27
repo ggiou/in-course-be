@@ -144,7 +144,7 @@ public class KakaoMemberService {
             if (optionalEmail.isPresent()){
                 throw new BusinessException("이미 가입된 이메일 입니다. 카카오 로그인 대신 다른 로그인을 해주세요.",DUPLICATED_USER_EMAIL);
             }
-            String gender = kakaoMemberInfo.getGender();
+            String gender = "남성";
 //            if(gender.contains("fe")){
 //                gender="여성";
 //            }else {
