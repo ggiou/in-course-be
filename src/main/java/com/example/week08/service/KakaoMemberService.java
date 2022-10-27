@@ -145,11 +145,15 @@ public class KakaoMemberService {
                 throw new BusinessException("이미 가입된 이메일 입니다. 카카오 로그인 대신 다른 로그인을 해주세요.",DUPLICATED_USER_EMAIL);
             }
             String gender = kakaoMemberInfo.getGender();
-//            if(gender.contains("fe")){
-//                gender="여성";
-//            }else {
-//                gender = "남성";
-//            }
+            if(gender.contains("fe")){
+                gender="여성";
+            }else {
+               gender = "남성";
+            }
+
+            if(gender.isEmpty()||gender==null){
+                gender="남성";
+            }
 
             //image : kakao image
             String image = kakaoMemberInfo.getImage(); // 이미지가 s3에 저장이 안 된 상태니..
