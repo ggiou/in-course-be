@@ -96,7 +96,7 @@ public class NaverLoginApi {
         //
         String msg = member.getNickname()+"님 반갑습니다.";
 
-        return new NaverMemberInfoDto(member.getNaverId(), member.getNickname(), member.getEmail(), member.getProfileImage());
+        return new NaverMemberInfoDto(member.getNaverId(),member.getGender(), member.getNickname(), member.getEmail(), member.getProfileImage());
 
     }
 // BE 시작점
