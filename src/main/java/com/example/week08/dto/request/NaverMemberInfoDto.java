@@ -18,6 +18,8 @@ public class NaverMemberInfoDto {
     private String RefreshToken;
     private String naverId;
     private String nickname;
+
+    private String gender;
     private String email;
     private String image;
 
@@ -28,12 +30,14 @@ public class NaverMemberInfoDto {
         this.RefreshToken = tokenDto.getRefreshToken();
         this.email = member.getEmail();
         this.nickname = member.getNickname();
+        this.gender = member.getGender();
         this.naverId = member.getNaverId();
         this.image = member.getProfileImage();
     }
 
-    public NaverMemberInfoDto(String email, String nickname, String naverId, String image) {
+    public NaverMemberInfoDto(String email, String gender, String nickname, String naverId, String image) {
         this.email = email;
+        this.gender = gender;
         this.nickname = nickname;
         this.naverId = naverId;
         this.image = image;
