@@ -19,6 +19,8 @@ public class KakaoMemberInfoDto {
     private String RefreshToken;
     private Long kakaoId;
     private String nickname;
+
+    private String gender;
     private String email;
     private String image;
     public KakaoMemberInfoDto(TokenDto tokenDto, Member member) {
@@ -27,15 +29,17 @@ public class KakaoMemberInfoDto {
         this.Authorization ="Bearer "+tokenDto.getAccessToken();
         this.RefreshToken = tokenDto.getRefreshToken();
         this.email = member.getEmail();
+        this.gender = member.getGender();
         this.nickname = member.getNickname();
         this.kakaoId = member.getKakaoId();
         this.image = member.getProfileImage();
     }
 
-    public KakaoMemberInfoDto(Long kakaoId,  String nickname, String email, String image) {
+    public KakaoMemberInfoDto(Long kakaoId, String nickname, String email, String image, String gender) {
         this.email = email;
         this.nickname = nickname;
         this.kakaoId = kakaoId;
         this.image = image;
+        this.gender = gender;
     }
 }
