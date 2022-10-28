@@ -54,7 +54,7 @@ GitHub: https://github.com/InCourseProject/in-course-be
 
 :blue_book: ERD
 -------------
-<img src="https://user-images.githubusercontent.com/110077343/194233246-3978d326-b55e-4cfc-89e4-17028565e967.png"></img><br/>  
+<img src="https://user-images.githubusercontent.com/110077343/198515914-17525309-4c2d-4425-8c0f-fbba0c9d3890.png"></img><br/>  
 
 :orange_book: API
 ------------- 
